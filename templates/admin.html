@@ -1,0 +1,2438 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - InsightGrid</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23dc2626' class='bi bi-grid-3x3-gap-fill' viewBox='0 0 16 16'%3E%3Cpath d='M1 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2zM1 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V7zM1 12a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2z'/%3E%3C/svg%3E">
+    <style>
+        :root {
+            /* Paleta de colores estandarizada */
+            --primary-base: #2d3748;
+            --primary-medium: #374151;
+            --primary-light: #4a5568;
+            --crimson-dark: #991b1b;
+            --crimson-medium: #dc2626;
+            --crimson-light: #b91c1c;
+            --bg-light: #f7fafc;
+            --bg-medium: #edf2f7;
+            --bg-dark: #e2e8f0;
+            --text-white: #ffffff;
+            --text-light: #f8f9fa;
+            --text-muted: #6b7280;
+            --border-color: #606c80;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --footer-height: 60px;
+            --header-height: 80px;
+        }
+
+        body {
+            background-color: var(--primary-base);
+            color: var(--text-white);
+            font-family: 'Segoe UI', sans-serif;
+            padding-bottom: var(--footer-height);
+            padding-top: var(--header-height);
+        }
+
+        /* Placeholders legibles */
+        input::placeholder,
+        textarea::placeholder {
+            color: #ffffff !important;
+            opacity: 0.8;
+        }
+
+        /* Header unificado con dashboard */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: rgba(45, 55, 72, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .app-title-light {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #f7fafc;
+            /* Más claro */
+            margin: 0;
+        }
+
+        .app-icon-large {
+            width: 40px;
+            /* Más grande */
+            height: 40px;
+            font-size: 1.8rem;
+            color: var(--crimson-medium);
+        }
+
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .user-role-badge {
+            background: var(--crimson-dark);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .admin-user-name {
+            color: var(--text-light);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .back-btn {
+            background: var(--primary-light);
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            background: var(--primary-medium);
+            color: var(--crimson-medium);
+            border-color: var(--crimson-medium);
+        }
+
+        .header-right {
+            width: 200px;
+            /* Para mantener balance visual */
+        }
+
+        /* CONTENEDOR PRINCIPAL MÁS ANCHO - ACTUALIZADO PARA 3/4 DE PANTALLA */
+        .container {
+            max-width: none !important;
+            width: 75vw !important; /* Cambiar a 75% de la pantalla */
+            margin-left: auto !important; /* Centrar automáticamente */
+            margin-right: auto !important; /* Centrar automáticamente */
+            padding: 0 2rem !important; /* Agregar padding lateral */
+        }
+
+        .admin-card {
+            background-color: var(--primary-light);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .admin-card .card-header {
+            background: linear-gradient(135deg, var(--crimson-dark), var(--crimson-medium));
+            color: white;
+            border-radius: 16px 16px 0 0;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--crimson-dark), var(--crimson-medium));
+            border: none;
+            border-radius: 10px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(153, 27, 27, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--crimson-light), var(--crimson-dark));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(153, 27, 27, 0.4);
+        }
+
+        .btn-outline-primary {
+            border-color: var(--crimson-medium);
+            color: var(--crimson-medium);
+            border-radius: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--crimson-medium);
+            border-color: var(--crimson-medium);
+            color: white;
+        }
+
+        .btn-outline-danger {
+            border-color: var(--error-color);
+            color: var(--error-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: var(--error-color);
+            border-color: var(--error-color);
+            color: white;
+        }
+
+        .btn-outline-warning {
+            border-color: var(--warning-color);
+            color: var(--warning-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-warning:hover {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-outline-success {
+            border-color: var(--success-color);
+            color: var(--success-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
+        }
+
+        .btn-outline-success:hover {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-outline-info {
+            border-color: #0ea5e9;
+            color: #0ea5e9;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+        .btn-outline-info:hover {
+            background-color: #0ea5e9;
+            border-color: #0ea5e9;
+            color: white;
+        }
+
+        .form-control,
+        .form-select {
+            background-color: var(--primary-medium);
+            border-color: var(--border-color);
+            color: var(--text-white);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            background-color: var(--primary-medium);
+            border-color: var(--crimson-medium);
+            color: var(--text-white);
+            box-shadow: 0 0 0 0.2rem rgba(153, 27, 27, 0.25);
+        }
+
+        .table-dark {
+            --bs-table-bg: var(--primary-light);
+            --bs-table-border-color: var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-dark th {
+            background-color: var(--primary-medium);
+            border-color: var(--border-color);
+            font-weight: 600;
+        }
+
+        .badge {
+            font-size: 0.8em;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+        }
+
+        .badge.bg-danger {
+            background-color: var(--error-color) !important;
+        }
+
+        .badge.bg-secondary {
+            background-color: var(--text-muted) !important;
+        }
+
+        .badge.bg-primary {
+            background-color: var(--crimson-medium) !important;
+        }
+
+        .badge.bg-warning {
+            background-color: var(--warning-color) !important;
+            color: var(--primary-base) !important;
+        }
+
+        .badge.bg-info {
+            background-color: #0ea5e9 !important;
+            color: white !important;
+        }
+
+        .nav-tabs {
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 0;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--text-muted);
+            border-color: transparent;
+            border-radius: 12px 12px 0 0;
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: var(--crimson-medium);
+            border-color: var(--border-color);
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: var(--primary-light);
+            border-color: var(--border-color) var(--border-color) var(--primary-light);
+            color: var(--crimson-medium);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            background-color: var(--primary-light);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+            padding: 2rem;
+        }
+
+        .permission-chip {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--crimson-medium);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 0.2rem;
+            gap: 0.5rem;
+            animation: fadeIn 0.3s ease;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+        }
+
+        .permission-chip {
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .permission-chip .remove-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .permission-chip .remove-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .add-permission-btn {
+            background-color: var(--primary-medium);
+            border: 2px dashed var(--border-color);
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 0.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-permission-btn:hover {
+            border-color: var(--crimson-medium);
+            color: var(--crimson-medium);
+            background-color: rgba(153, 27, 27, 0.1);
+        }
+
+        .dropdown-menu {
+            background-color: var(--primary-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .dropdown-item {
+            color: var(--text-white);
+            padding: 0.7rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--primary-medium);
+            color: var(--crimson-medium);
+        }
+
+        .modal-content {
+            background-color: var(--primary-light);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--primary-medium), var(--primary-light));
+            border-radius: 16px 16px 0 0;
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+            background: var(--primary-medium);
+            border-radius: 0 0 16px 16px;
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--crimson-medium);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: var(--primary-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            min-width: 300px;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--error-color);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning-color);
+        }
+
+        /* FOOTER STYLES */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--footer-height);
+            background: linear-gradient(135deg, var(--primary-medium), var(--primary-base));
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 998;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .footer-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+        }
+
+        /* Improved spacing for action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Enhanced form styling */
+        .enhanced-form {
+            background: var(--primary-medium);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .enhanced-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .enhanced-form .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-white);
+        }
+
+        /* File size styling */
+        .file-size {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .download-btn {
+            background: var(--crimson-medium);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .download-btn:hover {
+            background: var(--crimson-light);
+            transform: scale(1.05);
+        }
+
+        /* PDF VIEWER STYLES */
+        .pdf-viewer-modal .modal-dialog {
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .pdf-viewer-modal .modal-content {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pdf-viewer-modal .modal-body {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .pdf-viewer-container {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .pdf-viewer-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--primary-medium);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .pdf-download-btn {
+            background: var(--crimson-medium);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pdf-download-btn:hover {
+            background: var(--crimson-light);
+        }
+
+        /* SIMPLIFIED TOOL CREATION MODAL */
+        .modal-lg {
+            max-width: 800px;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-section {
+            background: var(--primary-base);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+
+        .form-section-title i {
+            color: var(--crimson-medium);
+            font-size: 1.2rem;
+        }
+
+        /* Tool type selection */
+        .tool-type-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-type-card {
+            background: var(--primary-medium);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tool-type-card:hover {
+            border-color: var(--crimson-medium);
+            background: rgba(153, 27, 27, 0.05);
+        }
+
+        .tool-type-card.selected {
+            border-color: var(--crimson-medium);
+            background: linear-gradient(135deg, rgba(153, 27, 27, 0.1), rgba(153, 27, 27, 0.05));
+        }
+
+        .tool-type-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .tool-type-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .tool-type-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            background: var(--primary-light);
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .tool-type-card.selected .tool-type-icon,
+        .tool-type-card:hover .tool-type-icon {
+            background: var(--crimson-medium);
+            color: white;
+        }
+
+        .tool-type-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-white);
+            margin: 0;
+        }
+
+        .tool-type-description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* Linking configuration */
+        .linking-config {
+            display: none;
+            background: linear-gradient(135deg, var(--primary-base), var(--primary-medium));
+            border: 2px solid var(--crimson-medium);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 1.5rem;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .linking-config.show {
+            display: block;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .config-item {
+            background: var(--primary-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .tool-selector {
+            background: var(--primary-medium);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .tool-checkbox {
+            background: var(--primary-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tool-checkbox:hover {
+            background: var(--primary-base);
+            border-color: var(--crimson-medium);
+        }
+
+        .tool-checkbox.selected {
+            background: rgba(153, 27, 27, 0.1);
+            border-color: var(--crimson-medium);
+        }
+
+        .tool-checkbox input[type="checkbox"] {
+            margin-right: 0.75rem;
+            transform: scale(1.2);
+            accent-color: var(--crimson-medium);
+        }
+
+        .tool-checkbox label {
+            cursor: pointer;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex: 1;
+        }
+
+        .tool-checkbox label strong {
+            font-size: 1rem;
+            color: var(--text-white);
+        }
+
+        .tool-checkbox label small {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* File Names Configuration Panel */
+        .file-names-config {
+            background: var(--primary-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .file-names-config.show {
+            display: block;
+        }
+
+        .file-names-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .file-name-item {
+            background: var(--primary-medium);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-name-item:hover {
+            border-color: var(--crimson-medium);
+        }
+
+        .file-name-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--text-white);
+            font-size: 0.9rem;
+        }
+
+        .file-name-header i {
+            color: var(--crimson-medium);
+            font-size: 1rem;
+        }
+
+        .file-name-input {
+            width: 100%;
+            background: var(--primary-base);
+            border: 1px solid var(--border-color);
+            color: var(--text-white);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-name-input:focus {
+            border-color: var(--crimson-medium);
+            outline: none;
+            box-shadow: 0 0 0 0.15rem rgba(153, 27, 27, 0.25);
+        }
+
+        .file-type-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .file-type-badge.linked {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .file-type-badge.additional {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 0 1rem;
+            }
+
+            .app-title-light {
+                font-size: 1.5rem;
+            }
+
+            .header-center {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .container {
+                width: calc(100vw - 2rem) !important;
+                margin-left: 1rem !important;
+                margin-right: 1rem !important;
+            }
+
+            .tab-content {
+                padding: 1rem;
+            }
+
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 0.5rem;
+                font-size: 0.8rem;
+                padding: 0.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+
+            .tool-type-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .file-names-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-lg {
+                max-width: 95%;
+            }
+        }
+
+        /* IMPROVED COMPANY FOLDER ANIMATIONS */
+        @keyframes folderOpen {
+            0% {
+                max-height: 0;
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+                border-left-color: transparent;
+            }
+
+            30% {
+                opacity: 0.3;
+                transform: translateY(-10px) scale(0.97);
+                border-left-color: rgba(96, 108, 128, 0.3);
+            }
+
+            60% {
+                opacity: 0.7;
+                transform: translateY(-3px) scale(0.99);
+                border-left-color: rgba(96, 108, 128, 0.7);
+            }
+
+            100% {
+                max-height: 1000px;
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                border-left-color: var(--border-color);
+            }
+        }
+
+        @keyframes folderClose {
+            0% {
+                max-height: 1000px;
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                border-left-color: var(--border-color);
+            }
+
+            40% {
+                opacity: 0.6;
+                transform: translateY(-5px) scale(0.98);
+                border-left-color: rgba(96, 108, 128, 0.5);
+            }
+
+            100% {
+                max-height: 0;
+                opacity: 0;
+                transform: translateY(-15px) scale(0.95);
+                border-left-color: transparent;
+            }
+        }
+
+        .company-tools.expanded {
+            animation: folderOpen 0.6s ease-out;
+        }
+
+        .company-tools.closing {
+            animation: folderClose 0.4s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Header unificado -->
+    <header class="main-header">
+        <div class="header-left">
+            <i class="bi bi-grid-3x3-gap-fill app-icon-large"></i>
+            <h1 class="app-title-light">InsightGrid</h1>
+        </div>
+
+        <div class="header-center">
+            {% if admin_user.username == "emiliano_admin" %}
+            <span class="user-role-badge">OWNER</span>
+            {% else %}
+            <span class="user-role-badge">ADMIN</span>
+            {% endif %}
+            <span class="admin-user-name">{{ admin_user.username }}</span>
+            <a href="/" class="back-btn">
+                <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
+            </a>
+        </div>
+
+        <div class="header-right">
+            <!-- Espacio para mantener balance visual -->
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Navigation tabs -->
+        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users"
+                    type="button" role="tab">
+                    <i class="bi bi-people me-2"></i>Usuarios
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="companies-tab" data-bs-toggle="tab" data-bs-target="#companies"
+                    type="button" role="tab">
+                    <i class="bi bi-building me-2"></i>Empresas
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tools-tab" data-bs-toggle="tab" data-bs-target="#tools" type="button"
+                    role="tab">
+                    <i class="bi bi-tools me-2"></i>Herramientas
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="files-tab" data-bs-toggle="tab" data-bs-target="#files" type="button"
+                    role="tab">
+                    <i class="bi bi-file-earmark-text me-2"></i>Archivos
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="adminTabContent">
+            <!-- Users Tab -->
+            <div class="tab-pane fade show active" id="users" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4 class="mb-4">Lista de Usuarios</h4>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Usuario</th>
+                                        <th>Email</th>
+                                        <th>Rol</th>
+                                        <th>Permisos</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in users %}
+                                    <tr>
+                                        <td>{{ user.id }}</td>
+                                        <td>{{ user.username }}</td>
+                                        <td>{{ user.email }}</td>
+                                        <td>
+                                            {% if user.username == "emiliano_admin" %}
+                                            <span class="badge bg-warning">OWNER</span>
+                                            {% elif user.is_admin %}
+                                            <span class="badge bg-danger">ADMIN</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">USER</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="permissions-container" id="permissions-{{ user.id }}">
+                                                {% for company in user.companies %}
+                                                <span class="permission-chip" data-permission-user="{{ user.id }}"
+                                                    data-permission-company="{{ company.id }}">
+                                                    {{ company.name }}
+                                                    <button class="remove-btn"
+                                                        onclick="removePermission({{ user.id }}, {{ company.id }})">
+                                                        <i class="bi bi-x"></i>
+                                                    </button>
+                                                </span>
+                                                {% endfor %}
+                                                <button class="add-permission-btn"
+                                                    onclick="showAddPermissionDropdown({{ user.id }})">
+                                                    <i class="bi bi-plus me-1"></i>Agregar
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if user.id != admin_user.id and user.username != "emiliano_admin" %}
+                                            <button class="btn btn-sm btn-outline-danger"
+                                                onclick="deleteUser({{ user.id }}, '{{ user.username }}')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="admin-card">
+                            <div class="card-header">
+                                <i class="bi bi-person-plus me-2"></i>Registrar Usuario
+                            </div>
+                            <div class="card-body">
+                                <div class="enhanced-form">
+                                    <form action="/admin/users/create" method="post">
+                                        <div class="form-group">
+                                            <label class="form-label">Email del Usuario</label>
+                                            <input type="email" class="form-control" name="email" required
+                                                placeholder="usuario@empresa.com">
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <input type="checkbox" class="form-check-input" name="is_admin"
+                                                    value="true" checked>
+                                                <label class="form-check-label">Registrar como Administrador</label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="bi bi-plus"></i> Registrar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Companies Tab -->
+            <div class="tab-pane fade" id="companies" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4 class="mb-4">Lista de Empresas</h4>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Carpeta</th>
+                                        <th>Herramientas</th>
+                                        <th>Usuarios</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for company in companies %}
+                                    <tr>
+                                        <td>{{ company.id }}</td>
+                                        <td>{{ company.name }}</td>
+                                        <td><code>{{ company.folder_name }}</code></td>
+                                        <td>{{ company.tools|length }}</td>
+                                        <td>{{ company.users|length }}</td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-sm btn-outline-success"
+                                                    onclick="showAddToolForm({{ company.id }}, '{{ company.name }}')">
+                                                    <i class="bi bi-plus"></i> Herramienta
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger"
+                                                    onclick="deleteCompany({{ company.id }}, '{{ company.name }}')">
+                                                    <i class="bi bi-trash"></i> Eliminar
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="admin-card">
+                            <div class="card-header">
+                                <i class="bi bi-building-add me-2"></i>Crear Empresa
+                            </div>
+                            <div class="card-body">
+                                <div class="enhanced-form">
+                                    <form action="/admin/companies/create" method="post">
+                                        <div class="form-group">
+                                            <label class="form-label">Nombre de la Empresa</label>
+                                            <input type="text" class="form-control" name="name" required
+                                                placeholder="Nombre completo de la empresa">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Nombre de Carpeta</label>
+                                            <input type="text" class="form-control" name="folder_name"
+                                                placeholder="empresa1, empresa2, etc." required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="bi bi-plus"></i> Crear Empresa
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tools Tab -->
+            <div class="tab-pane fade" id="tools" role="tabpanel">
+                <h4 class="mb-4">Lista de Herramientas</h4>
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Archivo</th>
+                                <th>Empresa</th>
+                                <th>Archivos Procesados</th>
+                                <th>Configuración</th>
+                                <th>PDF Guía</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tool in tools %}
+                            <tr>
+                                <td>{{ tool.id }}</td>
+                                <td>{{ tool.name }}</td>
+                                <td>
+                                    {% if tool.tool_type == "vinculacion" %}
+                                    <span class="badge bg-info">Vinculación</span>
+                                    {% else %}
+                                    <span class="badge bg-primary">Procesamiento</span>
+                                    {% endif %}
+                                </td>
+                                <td><code>{{ tool.filename }}</code></td>
+                                <td>{{ tool.company.name }}</td>
+                                <td>{{ tool.processed_files|length }}</td>
+                                <td>
+                                    {% if tool.tool_type == "vinculacion" %}
+                                    <small class="text-muted">
+                                        {{ tool.total_files }} archivos<br>
+                                        {{ tool.linked_processing_tools|length }} herramientas vinculadas
+                                    </small>
+                                    {% else %}
+                                    <small class="text-muted">-</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if tool.guide_pdf %}
+                                    <div class="action-buttons">
+                                        <button class="btn btn-sm btn-outline-info" 
+                                                onclick="viewPDF({{ tool.id }}, '{{ tool.guide_pdf_filename }}')">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success" 
+                                                onclick="downloadPDF({{ tool.id }})">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-warning" 
+                                                onclick="showPDFUpload({{ tool.id }}, 'change')">
+                                            <i class="bi bi-arrow-repeat"></i> Cambiar
+                                        </button>
+                                    </div>
+                                    {% else %}
+                                    <button class="btn btn-sm btn-outline-success" 
+                                            onclick="showPDFUpload({{ tool.id }}, 'add')">
+                                        <i class="bi bi-plus"></i> Agregar PDF
+                                    </button>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-danger"
+                                        onclick="deleteTool({{ tool.id }}, '{{ tool.name }}', {{ tool.company_id }})">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Files Tab -->
+            <div class="tab-pane fade" id="files" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">Archivos Procesados</h4>
+                    <div class="d-flex gap-2">
+                        <select class="form-select" id="filterCompany" onchange="filterFiles()">
+                            <option value="">Todas las empresas</option>
+                            {% for company in companies %}
+                            <option value="{{ company.id }}">{{ company.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <select class="form-select" id="filterTool" onchange="filterFiles()">
+                            <option value="">Todas las herramientas</option>
+                            {% for tool in tools %}
+                            <option value="{{ tool.id }}">{{ tool.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-outline-primary" onclick="refreshFiles()">
+                            <i class="bi bi-arrow-clockwise"></i> Actualizar
+                        </button>
+                    </div>
+                </div>
+
+                <div id="filesTableContainer">
+                    <div class="text-center p-4">
+                        <div class="loading-spinner"></div>
+                        <p class="mt-2 text-muted">Cargando archivos...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <img src="/static/img/icon.png" alt="EGOS Icon" class="footer-icon">
+            <span>Developed by EGOS - Eclipse Growth Optimization Services</span>
+            <span>Soporte: emiliano.outeda@gmail.com</span>
+        </div>
+    </footer>
+
+    <!-- Add Permission Dropdown -->
+    <div class="dropdown-menu" id="permissionDropdown" style="display: none;">
+        {% for company in companies %}
+        <a class="dropdown-item" href="#"
+            onclick="addPermission(currentUserId, {{ company.id }}, '{{ company.name }}')">
+            {{ company.name }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- PDF Upload Modal -->
+    <div class="modal fade" id="pdfUploadModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pdfUploadModalTitle">
+                        <i class="bi bi-file-earmark-pdf me-2"></i>
+                        Agregar PDF de Guía
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="pdfUploadForm" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Seleccionar archivo PDF</label>
+                            <input type="file" class="form-control" name="pdf_file" accept=".pdf" required>
+                            <div class="form-text">Solo archivos PDF. Tamaño máximo: 10MB</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="uploadPDFBtn">
+                            <i class="bi bi-upload me-2"></i>
+                            Subir PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Viewer Modal -->
+    <div class="modal fade pdf-viewer-modal" id="pdfViewerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header pdf-viewer-header">
+                    <h5 class="modal-title" id="pdfViewerTitle">
+                        <i class="bi bi-file-earmark-pdf me-2"></i>
+                        Visualizador de PDF
+                    </h5>
+                    <div class="d-flex gap-2">
+                        <button class="pdf-download-btn" id="pdfDownloadBtn" onclick="downloadCurrentPDF()">
+                            <i class="bi bi-download"></i>
+                            Descargar
+                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <iframe id="pdfViewer" class="pdf-viewer-container" src="/placeholder.svg"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ENHANCED Add Tool Modal -->
+    <div class="modal fade" id="addToolModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-tools me-2"></i>
+                        Crear Nueva Herramienta
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="addToolForm" method="post">
+                    <div class="modal-body">
+                        <!-- Basic Information Section -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="bi bi-info-circle"></i>
+                                Información Básica
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nombre de la Herramienta</label>
+                                        <input type="text" class="form-control" name="name" required
+                                            placeholder="Ej: Análisis de Ventas">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nombre del Archivo</label>
+                                        <input type="text" class="form-control" name="filename" 
+                                            placeholder="Ej: analisis_ventas.py" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tool Type Selection -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="bi bi-gear"></i>
+                                Tipo de Herramienta
+                            </div>
+
+                            <div class="tool-type-cards">
+                                <div class="tool-type-card selected" onclick="selectToolType('procesamiento')">
+                                    <input type="radio" name="tool_type" id="typeProcessing" 
+                                           value="procesamiento" checked>
+                                    <div class="tool-type-header">
+                                        <div class="tool-type-icon">
+                                            <i class="bi bi-gear-fill"></i>
+                                        </div>
+                                        <div>
+                                            <div class="tool-type-title">Procesamiento</div>
+                                        </div>
+                                    </div>
+                                    <div class="tool-type-description">
+                                        Procesa un archivo individual y genera un resultado.
+                                    </div>
+                                </div>
+
+                                <div class="tool-type-card" onclick="selectToolType('vinculacion')">
+                                    <input type="radio" name="tool_type" id="typeLinking" 
+                                           value="vinculacion">
+                                    <div class="tool-type-header">
+                                        <div class="tool-type-icon">
+                                            <i class="bi bi-link-45deg"></i>
+                                        </div>
+                                        <div>
+                                            <div class="tool-type-title">Vinculación</div>
+                                        </div>
+                                    </div>
+                                    <div class="tool-type-description">
+                                        Combina múltiples archivos en uno solo.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Linking Configuration -->
+                        <div class="linking-config" id="linkingConfig">
+                            <div class="form-section-title">
+                                <i class="bi bi-gear-fill"></i>
+                                Configuración de Vinculación
+                            </div>
+                            
+                            <div class="config-grid">
+                                <div class="config-item">
+                                    <label class="form-label">Número Total de Archivos</label>
+                                    <input type="number" class="form-control" name="total_files" min="2" max="6" 
+                                           value="2" placeholder="Entre 2 y 6 archivos" onchange="updateFileNamesConfig()">
+                                </div>
+
+                                <div class="config-item">
+                                    <label class="form-label">Herramientas a Vincular</label>
+                                    <div class="tool-selector" id="processingToolsSelector">
+                                        <div class="text-center text-muted p-3">
+                                            <div class="loading-spinner"></div>
+                                            <p class="mt-2">Cargando herramientas...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- File Names Configuration Panel -->
+                            <div class="file-names-config" id="fileNamesConfig">
+                                <div class="form-section-title">
+                                    <i class="bi bi-tag-fill"></i>
+                                    Nombres de Archivos Personalizados
+                                </div>
+                                <p class="text-muted mb-3">Personaliza los nombres que aparecerán para cada archivo en la interfaz de usuario.</p>
+                                <div class="file-names-grid" id="fileNamesGrid">
+                                    <!-- Se generará dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary"
+                            data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="createToolBtn">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Crear Herramienta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalTitle">Confirmar acción</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="confirmModalBody">
+                    ¿Está seguro de que desea realizar esta acción?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmModalAction">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentUserId = null;
+        let currentCompanyId = null;
+        let allFiles = [];
+        let filteredFiles = [];
+        let availableProcessingTools = [];
+        let currentPDFToolId = null;
+
+        // Toast notifications
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toastId = 'toast-' + Date.now();
+
+            const toast = document.createElement('div');
+            toast.id = toastId;
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-header">
+                    <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    <strong class="me-auto">${type === 'success' ? 'Éxito' : type === 'error' ? 'Error' : 'Información'}</strong>
+                    <button type="button" class="btn-close btn-close-white ms-2" onclick="removeToast('${toastId}')"></button>
+                </div>
+                <div class="toast-body">
+                    ${message}
+                </div>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => removeToast(toastId), 5000);
+        }
+
+        function removeToast(toastId) {
+            const toast = document.getElementById(toastId);
+            if (toast) {
+                toast.style.animation = 'slideOutRight 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }
+
+        function showConfirmModal(title, message, onConfirm) {
+            document.getElementById('confirmModalTitle').textContent = title;
+            document.getElementById('confirmModalBody').textContent = message;
+
+            const confirmBtn = document.getElementById('confirmModalAction');
+            confirmBtn.onclick = () => {
+                onConfirm();
+                bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
+            };
+
+            new bootstrap.Modal(document.getElementById('confirmModal')).show();
+        }
+
+        // PDF Management Functions
+        function showPDFUpload(toolId, action) {
+            currentPDFToolId = toolId;
+            const modal = document.getElementById('pdfUploadModal');
+            const title = document.getElementById('pdfUploadModalTitle');
+            const form = document.getElementById('pdfUploadForm');
+            
+            if (action === 'add') {
+                title.innerHTML = '<i class="bi bi-file-earmark-pdf me-2"></i>Agregar PDF de Guía';
+                form.action = `/admin/tools/${toolId}/upload-pdf`;
+            } else {
+                title.innerHTML = '<i class="bi bi-file-earmark-pdf me-2"></i>Cambiar PDF de Guía';
+                form.action = `/admin/tools/${toolId}/upload-pdf`;
+            }
+            
+            new bootstrap.Modal(modal).show();
+        }
+
+        function viewPDF(toolId, filename) {
+            const modal = document.getElementById('pdfViewerModal');
+            const title = document.getElementById('pdfViewerTitle');
+            const viewer = document.getElementById('pdfViewer');
+            
+            title.innerHTML = `<i class="bi bi-file-earmark-pdf me-2"></i>${filename}`;
+            viewer.src = `/admin/tools/${toolId}/view-pdf`;
+            currentPDFToolId = toolId;
+            
+            new bootstrap.Modal(modal).show();
+        }
+
+        function downloadPDF(toolId) {
+            window.open(`/admin/tools/${toolId}/download-pdf`, '_blank');
+        }
+
+        function downloadCurrentPDF() {
+            if (currentPDFToolId) {
+                downloadPDF(currentPDFToolId);
+            }
+        }
+
+        // Handle PDF upload form
+        document.getElementById('pdfUploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const uploadBtn = document.getElementById('uploadPDFBtn');
+            const originalText = uploadBtn.innerHTML;
+            
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<div class="loading-spinner me-2"></div>Subiendo...';
+            
+            try {
+                const formData = new FormData(this);
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    showToast('PDF subido correctamente', 'success');
+                    bootstrap.Modal.getInstance(document.getElementById('pdfUploadModal')).hide();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    const error = await response.text();
+                    showToast(`Error al subir PDF: ${error}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error uploading PDF:', error);
+                showToast('Error de conexión', 'error');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = originalText;
+            }
+        });
+
+        // Permission management
+        function showAddPermissionDropdown(userId) {
+            currentUserId = userId;
+            const dropdown = document.getElementById('permissionDropdown');
+            const button = event.target;
+
+            // Position dropdown near the button
+            const rect = button.getBoundingClientRect();
+            dropdown.style.position = 'fixed';
+            dropdown.style.top = (rect.bottom + 5) + 'px';
+            dropdown.style.left = rect.left + 'px';
+            dropdown.style.display = 'block';
+            dropdown.style.zIndex = '9999';
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!dropdown.contains(e.target) && e.target !== button) {
+                    dropdown.style.display = 'none';
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        }
+
+        async function addPermission(userId, companyId, companyName) {
+            try {
+                const response = await fetch('/api/permissions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        company_id: companyId
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+
+                    // Add permission chip to UI with correct data attributes
+                    const container = document.getElementById(`permissions-${userId}`);
+                    const addButton = container.querySelector('.add-permission-btn');
+
+                    const chip = document.createElement('span');
+                    chip.className = 'permission-chip';
+                    chip.setAttribute('data-permission-user', userId);
+                    chip.setAttribute('data-permission-company', companyId);
+                    chip.innerHTML = `
+                ${companyName}
+                <button class="remove-btn" onclick="removePermission(${userId}, ${companyId})">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+
+                    container.insertBefore(chip, addButton);
+
+                    // NOTIFICAR CAMBIO DE PERMISOS
+                    if (typeof (Storage) !== "undefined") {
+                        localStorage.setItem('permissions_changed', Date.now().toString());
+                        setTimeout(() => {
+                            localStorage.removeItem('permissions_changed');
+                        }, 1000);
+                    }
+
+                    console.log('✅ Permission added:', result);
+                    showToast(`Permiso agregado: ${companyName}`, 'success');
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Error al agregar permiso');
+                }
+            } catch (error) {
+                console.error('Error adding permission:', error);
+                showToast(`Error al agregar permiso: ${error.message}`, 'error');
+            }
+
+            // Hide dropdown
+            document.getElementById('permissionDropdown').style.display = 'none';
+        }
+
+        async function removePermission(userId, companyId) {
+            try {
+                // Mostrar estado de carga
+                const permissionChip = document.querySelector(`[data-permission-user="${userId}"][data-permission-company="${companyId}"]`);
+                if (permissionChip) {
+                    const removeBtn = permissionChip.querySelector('.remove-btn');
+                    const originalContent = removeBtn.innerHTML;
+                    removeBtn.innerHTML = '<div class="loading-spinner" style="width: 12px; height: 12px;"></div>';
+                    removeBtn.disabled = true;
+                }
+
+                const response = await fetch(`/api/permissions/${userId}/${companyId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+
+                    // Eliminar visualmente el chip del permiso con animación
+                    if (permissionChip) {
+                        permissionChip.style.animation = 'fadeOut 0.3s ease-out';
+                        setTimeout(() => {
+                            permissionChip.remove();
+                        }, 300);
+                    }
+
+                    // NOTIFICAR CAMBIO DE PERMISOS PARA INVALIDAR CACHE
+                    if (typeof (Storage) !== "undefined") {
+                        localStorage.setItem('permissions_changed', Date.now().toString());
+                        // Limpiar después de un momento
+                        setTimeout(() => {
+                            localStorage.removeItem('permissions_changed');
+                        }, 1000);
+                    }
+
+                    // Log detallado del resultado
+                    console.log('✅ Permission removed:', result);
+                    showToast(`Permiso eliminado correctamente`, 'success');
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Error al eliminar permiso');
+                }
+            } catch (error) {
+                console.error('Error removing permission:', error);
+                showToast(`Error al eliminar permiso: ${error.message}`, 'error');
+
+                // Restaurar botón en caso de error
+                const permissionChip = document.querySelector(`[data-permission-user="${userId}"][data-permission-company="${companyId}"]`);
+                if (permissionChip) {
+                    const removeBtn = permissionChip.querySelector('.remove-btn');
+                    removeBtn.innerHTML = '<i class="bi bi-x"></i>';
+                    removeBtn.disabled = false;
+                }
+            }
+        }
+
+        // User management
+        async function deleteUser(userId, username) {
+            showConfirmModal(
+                'Eliminar Usuario',
+                `¿Está seguro de que desea eliminar al usuario "${username}"? Esta acción no se puede deshacer.`,
+                async () => {
+                    try {
+                        const response = await fetch(`/admin/users/${userId}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (response.ok) {
+                            showToast(`Usuario "${username}" eliminado correctamente`, 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            const error = await response.text();
+                            showToast(`Error al eliminar usuario: ${error}`, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting user:', error);
+                        showToast('Error de conexión', 'error');
+                    }
+                }
+            );
+        }
+
+        // Company management
+        async function showAddToolForm(companyId, companyName) {
+            currentCompanyId = companyId;
+            const form = document.getElementById('addToolForm');
+            form.action = `/admin/companies/${companyId}/tools/create`;
+
+            document.querySelector('#addToolModal .modal-title').innerHTML = `
+                <i class="bi bi-tools me-2"></i>
+                Crear Nueva Herramienta - ${companyName}
+            `;
+
+            // Reset form
+            form.reset();
+            resetFormState();
+
+            // Load processing tools for this company
+            await loadProcessingTools(companyId);
+
+            new bootstrap.Modal(document.getElementById('addToolModal')).show();
+        }
+
+        function resetFormState() {
+            // Reset tool type selection
+            document.getElementById('typeProcessing').checked = true;
+            document.getElementById('typeLinking').checked = false;
+            
+            // Apply visual selection
+            document.querySelectorAll('.tool-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            document.querySelector('.tool-type-card:first-child').classList.add('selected');
+            
+            // Hide linking configuration
+            document.getElementById('linkingConfig').classList.remove('show');
+            document.getElementById('fileNamesConfig').style.display = 'none';
+        }
+
+        function selectToolType(type) {
+            // Update radio buttons
+            document.getElementById('typeProcessing').checked = (type === 'procesamiento');
+            document.getElementById('typeLinking').checked = (type === 'vinculacion');
+            
+            // Update visual selection
+            document.querySelectorAll('.tool-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            if (type === 'procesamiento') {
+                document.querySelector('.tool-type-card:first-child').classList.add('selected');
+                document.getElementById('linkingConfig').classList.remove('show');
+            } else {
+                document.querySelector('.tool-type-card:last-child').classList.add('selected');
+                document.getElementById('linkingConfig').classList.add('show');
+                if (currentCompanyId) {
+                    loadProcessingTools(currentCompanyId);
+                }
+                updateFileNamesConfig();
+            }
+        }
+
+        async function loadProcessingTools(companyId) {
+            const selector = document.getElementById('processingToolsSelector');
+            
+            try {
+                const response = await fetch(`/admin/api/companies/${companyId}/processing-tools`);
+                if (response.ok) {
+                    availableProcessingTools = await response.json();
+                    renderProcessingToolsSelector();
+                    updateFileNamesConfig();
+                } else {
+                    throw new Error('Error al cargar herramientas');
+                }
+            } catch (error) {
+                console.error('Error loading processing tools:', error);
+                selector.innerHTML = `
+                    <div class="text-center text-danger p-3">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <p class="mt-2">Error al cargar herramientas</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderProcessingToolsSelector() {
+            const selector = document.getElementById('processingToolsSelector');
+            
+            if (availableProcessingTools.length === 0) {
+                selector.innerHTML = `
+                    <div class="text-center text-warning p-4">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+                        <h6 class="mt-2">No hay herramientas disponibles</h6>
+                        <p class="mb-0">Debe crear al menos 2 herramientas de procesamiento primero</p>
+                    </div>
+                `;
+                return;
+            }
+
+            selector.innerHTML = availableProcessingTools.map(tool => `
+                <div class="tool-checkbox" onclick="toggleToolSelection(${tool.id})">
+                    <input type="checkbox" id="tool_${tool.id}" value="${tool.id}" onchange="updateFileNamesConfig()">
+                    <label for="tool_${tool.id}">
+                        <strong>${tool.name}</strong>
+                        <small>${tool.filename}</small>
+                    </label>
+                </div>
+            `).join('');
+        }
+
+        function toggleToolSelection(toolId) {
+            const checkbox = document.getElementById(`tool_${toolId}`);
+            const toolCheckbox = checkbox.closest('.tool-checkbox');
+            
+            checkbox.checked = !checkbox.checked;
+            
+            if (checkbox.checked) {
+                toolCheckbox.classList.add('selected');
+            } else {
+                toolCheckbox.classList.remove('selected');
+            }
+            
+            updateFileNamesConfig();
+        }
+
+        function updateFileNamesConfig() {
+            const linkingConfig = document.getElementById('linkingConfig');
+            const fileNamesConfig = document.getElementById('fileNamesConfig');
+            const fileNamesGrid = document.getElementById('fileNamesGrid');
+            
+            if (!linkingConfig.classList.contains('show')) {
+                fileNamesConfig.style.display = 'none';
+                return;
+            }
+
+            const totalFiles = parseInt(document.querySelector('input[name="total_files"]').value) || 2;
+            const selectedTools = Array.from(document.querySelectorAll('#processingToolsSelector input[type="checkbox"]:checked'));
+            
+            fileNamesConfig.style.display = 'block';
+            
+            let html = '';
+            
+            // Generate file name inputs for linked tools
+            selectedTools.forEach((checkbox, index) => {
+                const toolId = checkbox.value;
+                const tool = availableProcessingTools.find(t => t.id == toolId);
+                const toolName = tool ? tool.name : `Herramienta ${toolId}`;
+                
+                html += `
+                    <div class="file-name-item">
+                        <div class="file-name-header">
+                            <i class="bi bi-link-45deg"></i>
+                            Archivo ${index + 1}
+                            <span class="file-type-badge linked">Vinculado</span>
+                        </div>
+                        <input type="text" class="file-name-input" 
+                               name="file_name_${index}" 
+                               value="${toolName}"
+                               placeholder="Nombre del archivo ${index + 1}">
+                        <input type="hidden" name="file_tool_id_${index}" value="${toolId}">
+                    </div>
+                `;
+            });
+            
+            // Generate file name inputs for additional files
+            for (let i = selectedTools.length; i < totalFiles; i++) {
+                const additionalNumber = i - selectedTools.length + 1;
+                html += `
+                    <div class="file-name-item">
+                        <div class="file-name-header">
+                            <i class="bi bi-cloud-upload"></i>
+                            Archivo ${i + 1}
+                            <span class="file-type-badge additional">Adicional</span>
+                        </div>
+                        <input type="text" class="file-name-input" 
+                               name="file_name_${i}" 
+                               value="Archivo adicional ${additionalNumber}"
+                               placeholder="Nombre del archivo ${i + 1}">
+                    </div>
+                `;
+            }
+            
+            fileNamesGrid.innerHTML = html;
+        }
+
+        async function deleteCompany(companyId, companyName) {
+            showConfirmModal(
+                'Eliminar Empresa',
+                `¿Está seguro de que desea eliminar la empresa "${companyName}"? Esta acción eliminará también todas sus herramientas y no se puede deshacer.`,
+                async () => {
+                    try {
+                        const response = await fetch(`/api/companies/${companyId}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (response.ok) {
+                            showToast(`Empresa "${companyName}" eliminada correctamente`, 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            const error = await response.text();
+                            showToast(`Error al eliminar empresa: ${error}`, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting company:', error);
+                        showToast('Error de conexión', 'error');
+                    }
+                }
+            );
+        }
+
+        // Tool management
+        async function deleteTool(toolId, toolName, companyId) {
+            showConfirmModal(
+                'Eliminar Herramienta',
+                `¿Está seguro de que desea eliminar la herramienta "${toolName}"? Esta acción no se puede deshacer.`,
+                async () => {
+                    try {
+                        const response = await fetch(`/api/companies/${companyId}/tools/${toolId}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (response.ok) {
+                            showToast(`Herramienta "${toolName}" eliminada correctamente`, 'success');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            const error = await response.text();
+                            showToast(`Error al eliminar herramienta: ${error}`, 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting tool:', error);
+                        showToast('Error de conexión', 'error');
+                    }
+                }
+            );
+        }
+
+        // Files management
+        async function loadFiles() {
+            try {
+                const response = await fetch('/admin/api/files');
+                if (response.ok) {
+                    allFiles = await response.json();
+                    filteredFiles = [...allFiles];
+                    renderFilesTable();
+                } else {
+                    throw new Error('Error al cargar archivos');
+                }
+            } catch (error) {
+                console.error('Error loading files:', error);
+                document.getElementById('filesTableContainer').innerHTML = `
+                    <div class="text-center p-4">
+                        <i class="bi bi-exclamation-triangle text-warning" style="font-size: 2rem;"></i>
+                        <p class="mt-2 text-muted">Error al cargar archivos</p>
+                        <button class="btn btn-outline-primary" onclick="loadFiles()">
+                            <i class="bi bi-arrow-clockwise"></i> Reintentar
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function renderFilesTable() {
+            const container = document.getElementById('filesTableContainer');
+
+            if (filteredFiles.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-4">
+                        <i class="bi bi-file-earmark-x" style="font-size: 2rem; color: var(--text-light);"></i>
+                        <p class="mt-2 text-light">No hay archivos que mostrar</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Archivo Procesado</th>
+                                <th>Archivo Original</th>
+                                <th>Usuario</th>
+                                <th>Herramienta</th>
+                                <th>Tipo</th>
+                                <th>Empresa</th>
+                                <th>Tamaño</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${filteredFiles.map(file => `
+                                <tr>
+                                    <td>${file.id}</td>
+                                    <td>
+                                        ${file.processed_filename}
+                                        ${file.input_files_info ? `
+                                            <br><button class="btn btn-sm btn-outline-info mt-1" 
+                                                onclick="showInputFiles(${file.id})" title="Ver archivos originales">
+                                                <i class="bi bi-files"></i> Ver originales
+                                            </button>
+                                        ` : ''}
+                                    </td>
+                                    <td class="text-light">${file.original_filename}</td>
+                                    <td>
+                                        ${file.user_username}
+                                    </td>
+                                    <td>
+                                        ${file.tool_name}
+                                    </td>
+                                    <td>
+                                        ${file.tool_type === 'vinculacion' ? 
+                                            '<span class="badge bg-info">Vinculación</span>' : 
+                                            '<span class="badge bg-primary">Procesamiento</span>'
+                                        }
+                                    </td>
+                                    <td>
+                                        ${file.company_name}
+                                    </td>
+                                    <td class="file-size">${formatFileSize(file.file_size)}</td>
+                                    <td class="text-light">${formatDate(file.processed_at)}</td>
+                                    <td>
+                                        <button class="download-btn" onclick="downloadAdminFile(${file.id})" title="Descargar archivo">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function showInputFiles(fileId) {
+            const file = allFiles.find(f => f.id === fileId);
+            if (!file || !file.input_files_info) return;
+
+            const inputFiles = file.input_files_info;
+            let content = '<h6>Archivos utilizados:</h6><ul>';
+            
+            inputFiles.forEach((inputFile, index) => {
+                content += `<li><strong>Archivo ${index + 1}:</strong> ${inputFile.filename}`;
+                if (inputFile.source_tool) {
+                    content += ` <small class="text-muted">(desde ${inputFile.source_tool})</small>`;
+                }
+                content += '</li>';
+            });
+            content += '</ul>';
+
+            showConfirmModal('Archivos de Entrada', '', () => {});
+            document.getElementById('confirmModalBody').innerHTML = content;
+            document.getElementById('confirmModalAction').style.display = 'none';
+        }
+
+        function filterFiles() {
+            const companyFilter = document.getElementById('filterCompany').value;
+            const toolFilter = document.getElementById('filterTool').value;
+
+            filteredFiles = allFiles.filter(file => {
+                const companyMatch = !companyFilter || file.company_id.toString() === companyFilter;
+                const toolMatch = !toolFilter || file.tool_id.toString() === toolFilter;
+                return companyMatch && toolMatch;
+            });
+
+            renderFilesTable();
+        }
+
+        function refreshFiles() {
+            document.getElementById('filesTableContainer').innerHTML = `
+                <div class="text-center p-4">
+                    <div class="loading-spinner"></div>
+                    <p class="mt-2 text-muted">Actualizando archivos...</p>
+                </div>
+            `;
+            loadFiles();
+        }
+
+        async function downloadAdminFile(fileId) {
+            try {
+                const response = await fetch(`/admin/api/files/${fileId}/download`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+
+                    // Get filename from response
+                    const contentDisposition = response.headers.get('content-disposition');
+                    let filename = 'archivo.xlsx';
+                    if (contentDisposition) {
+                        const filenameMatch = contentDisposition.match(/filename=(.+)/);
+                        if (filenameMatch) {
+                            filename = filenameMatch[1].replace(/"/g, '');
+                        }
+                    }
+
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    window.URL.revokeObjectURL(url);
+
+                    showToast('Archivo descargado correctamente', 'success');
+                } else {
+                    showToast('Error al descargar archivo', 'error');
+                }
+            } catch (error) {
+                console.error('Error downloading file:', error);
+                showToast('Error de conexión', 'error');
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Initialize files tab when it becomes active
+        document.getElementById('files-tab').addEventListener('shown.bs.tab', function (e) {
+            if (allFiles.length === 0) {
+                loadFiles();
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('addToolForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            console.log('🚀 Form submission started');
+            
+            const formData = new FormData(this);
+            const isLinking = document.getElementById('typeLinking').checked;
+            
+            // Log form data
+            for (let [key, value] of formData.entries()) {
+                console.log(`📝 ${key}: ${value}`);
+            }
+            
+            if (isLinking) {
+                // Add selected tools
+                const selectedTools = Array.from(document.querySelectorAll('#processingToolsSelector input[type="checkbox"]:checked'))
+                    .map(cb => cb.value);
+                console.log('🔗 Selected tools:', selectedTools);
+                formData.set('linked_tools', selectedTools.join(','));
+                
+                // Add custom file names configuration
+                const totalFiles = parseInt(formData.get('total_files')) || 2;
+                const fileConfig = {};
+                
+                for (let i = 0; i < totalFiles; i++) {
+                    const fileName = formData.get(`file_name_${i}`) || `Archivo ${i + 1}`;
+                    const toolId = formData.get(`file_tool_id_${i}`);
+                    
+                    if (toolId) {
+                        // Linked file
+                        fileConfig[i] = { 
+                            type: 'linked', 
+                            tool_id: parseInt(toolId),
+                            name: fileName
+                        };
+                    } else {
+                        // Additional file
+                        fileConfig[i] = { 
+                            type: 'upload',
+                            name: fileName
+                        };
+                    }
+                }
+                
+                formData.set('file_config', JSON.stringify(fileConfig));
+                console.log('📋 File config:', fileConfig);
+            }
+
+            // Show loading state
+            const createBtn = document.getElementById('createToolBtn');
+            const originalText = createBtn.innerHTML;
+            createBtn.disabled = true;
+            createBtn.innerHTML = '<div class="loading-spinner me-2"></div>Creando herramienta...';
+
+            // Submit form
+            fetch(this.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                console.log('📡 Response status:', response.status);
+                if (response.ok) {
+                    showToast('Herramienta creada correctamente', 'success');
+                    // Cerrar el modal automáticamente
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addToolModal'));
+                    if (modal) {
+                        modal.hide();
+                    }
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    return response.text().then(text => {
+                        console.error('❌ Server error:', text);
+                        throw new Error(text);
+                    });
+                }
+            }).catch(error => {
+                console.error('❌ Error creating tool:', error);
+                showToast(`Error al crear herramienta: ${error.message}`, 'error');
+            }).finally(() => {
+                // Restore button
+                createBtn.disabled = false;
+                createBtn.innerHTML = originalText;
+            });
+        });
+    </script>
+</body>
+
+</html>

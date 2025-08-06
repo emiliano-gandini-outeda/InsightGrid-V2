@@ -1,0 +1,2422 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InsightGrid - Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23dc2626' class='bi bi-grid-3x3-gap-fill' viewBox='0 0 16 16'%3E%3Cpath d='M1 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2zM1 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V7zM1 12a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-2zm5 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-2z'/%3E%3C/svg%3E">
+<style>
+    :root {
+        /* Paleta de colores estandarizada */
+        --primary-base: #3e4147;
+        --primary-medium: #2f3031;
+        --primary-light: #474747;
+        --crimson-dark: #991b1b;
+        --crimson-medium: #dc2626;
+        --crimson-light: #b91c1c;
+        --bg-light: #f7fafc;
+        --bg-medium: #edf2f7;
+        --bg-dark: #e2e8f0;
+        --text-white: #ffffff;
+        --text-light: #f8f9fa;
+        --text-muted: #6b7280;
+        --border-color: #363636;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        --sidebar-width: 25vw; /* Cambiar de 320px a 25vw para 1/4 de pantalla */
+        --header-height: 80px;
+        --footer-height: 60px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, var(--primary-base) 0%, var(--primary-medium) 100%);
+        color: var(--text-white);
+        min-height: 100vh;
+        padding-bottom: var(--footer-height);
+    }
+
+    /* Placeholders legibles */
+    input::placeholder,
+    textarea::placeholder {
+        color: #ffffff !important;
+        opacity: 0.8;
+    }
+
+    /* LOGIN STYLES */
+    #loginScreen {
+        display: none;
+        background: linear-gradient(135deg, var(--primary-base) 0%, var(--primary-medium) 50%, var(--primary-light) 100%);
+        font-family: 'Segoe UI', sans-serif;
+        color: var(--text-white);
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+            radial-gradient(circle at 20% 80%, rgba(153, 27, 27, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(153, 27, 27, 0.1) 0%, transparent 50%);
+        animation: backgroundPulse 8s ease-in-out infinite;
+        overflow: hidden
+    }
+
+    @keyframes backgroundPulse {
+
+        0%,
+        100% {
+            opacity: 0.3;
+        }
+
+        50% {
+            opacity: 0.6;
+        }
+    }
+
+    .login-container {
+        background: rgba(48, 52, 61, 0.95);
+        backdrop-filter: blur(20px);
+        padding: 3rem 2.5rem;
+        border-radius: 24px;
+        box-shadow:
+            0 25px 50px rgba(0, 0, 0, 0.5),
+            0 0 0 1px rgba(153, 27, 27, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        width: 100%;
+        max-width: 420px;
+        text-align: center;
+        position: relative;
+        z-index: 10;
+        animation: loginFadeIn 0.8s ease-out;
+    }
+
+    @keyframes loginFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .login-logo {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, var(--crimson-dark), var(--crimson-medium));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        box-shadow: 0 10px 30px rgba(153, 27, 27, 0.3);
+    }
+
+    .login-container h2 {
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, var(--crimson-dark), var(--crimson-medium));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .login-subtitle {
+        color: var(--text-muted);
+        margin-bottom: 2.5rem;
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    .btn-sso {
+        background: linear-gradient(135deg, var(--crimson-dark), var(--crimson-medium));
+        border: none;
+        color: var(--text-white);
+        margin-top: 1rem;
+        width: 100%;
+        transition: all 0.3s ease;
+        padding: 1rem 1.5rem;
+        border-radius: 16px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        box-shadow: 0 8px 25px rgba(153, 27, 27, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-sso::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn-sso:hover::before {
+        left: 100%;
+    }
+
+    .btn-sso:hover {
+        background: linear-gradient(135deg, var(--crimson-light), var(--crimson-dark));
+        color: var(--text-white);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 35px rgba(153, 27, 27, 0.4);
+    }
+
+    .login-footer {
+        margin-top: 2.5rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.6;
+    }
+
+    .login-footer p {
+        margin: 0.5rem 0;
+    }
+
+    .support-email {
+        color: var(--crimson-medium);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .support-email:hover {
+        color: var(--crimson-light);
+    }
+
+    /* DASHBOARD STYLES */
+    #dashboard {
+        display: none;
+        min-height: 100vh;
+        background: var(--primary-base);
+    }
+
+    .dashboard-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--header-height);
+        background: rgba(47, 51, 58, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;    
+        justify-content: space-between;
+        padding: 0 2rem;
+        z-index: 1000;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #f7fafc;
+        /* Título más claro */
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .app-icon-large {
+        width: 40px;
+        /* Logo más grande */
+        height: 40px;
+        font-size: 1.8rem;
+        color: var(--crimson-medium);
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        background: var(--primary-light);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+    }
+
+    .user-info i {
+        color: var(--crimson-medium);
+    }
+
+    #sidebar {
+        background: linear-gradient(180deg, var(--primary-medium) 0%, var(--primary-light) 100%);
+        color: var(--text-white);
+        height: calc(100vh - var(--header-height) - var(--footer-height));
+        width: 25vw;
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        padding: 1.5rem 0;
+        border-right: 1px solid var(--border-color);
+        box-shadow: 2px 0 10px var(--shadow-color);
+        overflow-y: auto;
+        overflow-x: hidden;
+        /* Sin scroll horizontal */
+        z-index: 999;
+    }
+
+    /* Scrollbar personalizado para el sidebar */
+    #sidebar::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #sidebar::-webkit-scrollbar-track {
+        background: var(--primary-base);
+        border-radius: 4px;
+    }
+
+    #sidebar::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, var(--crimson-dark), var(--crimson-medium));
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    #sidebar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, var(--crimson-medium), var(--crimson-light));
+        transform: scale(1.1);
+    }
+
+    /* Firefox scrollbar */
+    #sidebar {
+        scrollbar-width: thin;
+        scrollbar-color: var(--crimson-medium) var(--primary-base);
+    }
+
+    .sidebar-title {
+        margin: 0 1.5rem 1.5rem 1.5rem;
+        padding: 1rem;
+        background: linear-gradient(135deg, var(--primary-light), rgba(66, 70, 77, 0.8));
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        text-align: center;
+        color: var(--text-white);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .sidebar-title i {
+        color: var(--crimson-medium);
+        /* Icono herramientas más claro */
+    }
+
+    /* IMPROVED COMPANY FOLDER STYLES WITH ANIMATIONS */
+    .company-item {
+        margin: 0.5rem 1rem;
+    }
+
+    .company-folder {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        color: var(--text-white);
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        gap: 0.8rem;
+        border-radius: 12px;
+        position: relative;
+        background: linear-gradient(-90deg, var(--primary-medium), var(--primary-light));
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+    }
+
+    .company-folder::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(153, 27, 27, 0.1), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .company-folder:hover::before {
+        left: 100%;
+    }
+
+    .company-folder:hover {
+        background: linear-gradient(135deg, rgba(153, 27, 27, 0.15), rgba(153, 27, 27, 0.08));
+        border-color: var(--crimson-medium);
+        transform: translateX(3px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(153, 27, 27, 0.2);
+    }
+
+    .company-folder.active {
+        background: linear-gradient(135deg, var(--crimson-dark), var(--crimson-medium));
+        color: var(--text-white);
+        font-weight: 600;
+        border-color: var(--crimson-light);
+        transform: translateX(5px) scale(1.03);
+        box-shadow: 0 12px 30px rgba(153, 27, 27, 0.3);
+    }
+
+    .company-folder i:first-child {
+        width: 24px;
+        font-size: 1.3rem;
+        color: var(--crimson-medium);
+        transition: all 0.3s ease;
+    }
+
+    .company-folder.active i:first-child {
+        color: var(--text-white);
+        transform: scale(1.1);
+    }
+
+    .company-name {
+        flex: 1;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .company-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .tools-total {
+        background: rgba(255, 255, 255, 0.2);
+        color: var(--text-white);
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        min-width: 24px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .company-folder.active .tools-total {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+    }
+
+    .folder-arrow {
+        font-size: 0.9rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        color: var(--text-muted);
+    }
+
+    .company-folder.active .folder-arrow {
+        color: var(--text-white);
+    }
+
+    .folder-arrow.expanded {
+        transform: rotate(90deg);
+    }
+
+    /* ANIMATED COMPANY TOOLS - CORREGIDO */
+    .company-tools {
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+        transform: translateY(-10px);
+        margin-left: 1rem;
+        margin-right: 1rem; /* Agregar margen derecho */
+        border-left: 3px solid transparent;
+        padding-left: 1rem; /* Aumentar padding izquierdo */
+        padding-right: 0.5rem; /* Agregar padding derecho */
+    }
+
+    .company-tools.expanded {
+        max-height: 1000px;
+        opacity: 1;
+        transform: translateY(0);
+        border-left-color: var(--border-color);
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Tool sections - MEJORAR ESPACIADO */
+    .tool-section {
+        margin: 0.75rem 0;
+        padding-left: 0.5rem; /* Reducir padding para compensar el nuevo padding del contenedor */
+        padding-right: 0.5rem; /* Agregar padding derecho */
+    }
+
+    .tool-section-header {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0.75rem;
+        margin: 0.25rem 0;
+        background: var(--primary-light);
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-light);
+        border-left: 3px solid var(--crimson-medium);
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .tool-section-header i {
+        color: var(--crimson-medium);
+        font-size: 0.9rem;
+    }
+
+    .tool-section-header span {
+        flex: 1;
+    }
+
+    .tool-section-content {
+        padding: 0.5rem 0 0.5rem 1rem;
+        border-left: 2px solid var(--border-color);
+        margin-left: 0.5rem;
+        margin-right: 0.5rem; /* Agregar margen derecho */
+    }
+
+    .tool-item {
+        margin: 0.25rem 0;
+        margin-right: 0.5rem; /* Separar del borde derecho */
+    }
+
+    .tool-link {
+        display: flex;
+        align-items: center;
+        padding: 0.6rem 0.75rem;
+        color: var(--text-light);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        gap: 0.6rem;
+        border-radius: 6px;
+        margin: 0.1rem 0;
+        position: relative;
+        background: var(--primary-medium);
+        border: 1px solid transparent;
+        font-size: 0.9rem;
+        z-index: 1; /* Asegurar que esté por encima del sidebar */
+    }
+
+    .tool-link:hover,
+    .tool-link.active {
+        background: linear-gradient(135deg, rgba(153, 27, 27, 0.15), rgba(153, 27, 27, 0.08));
+        color: var(--crimson-medium);
+        border-color: var(--crimson-medium);
+        font-weight: 600;
+        transform: translateX(3px);
+        box-shadow: 0 2px 8px rgba(153, 27, 27, 0.2);
+        z-index: 2; /* Elevar cuando está activo/hover */
+    }
+
+    .tool-name {
+        flex: 1;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        line-height: 1.3;
+        max-width: 100%;
+        hyphens: auto;
+    }
+
+    .tool-type-badge {
+        padding: 0.15rem 0.4rem;
+        border-radius: 6px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        transition: all 0.3s ease;
+    }
+
+    .tool-type-badge.processing {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .tool-type-badge.linking {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .empty-tools-state {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--text-muted);
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .empty-tools-state i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: var(--border-color);
+    }
+
+    .empty-tools-state p {
+        margin: 0.5rem 0;
+        font-weight: 500;
+    }
+
+    .empty-tools-state small {
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+
+    #main-content {
+        margin-left: 25vw;
+        margin-top: var(--header-height);
+        padding: 2rem;
+        min-height: calc(100vh - var(--header-height) - var(--footer-height));
+        padding-bottom: 2rem;
+    }
+
+    .tool-content {
+        background: linear-gradient(135deg, var(--primary-light) 0%, rgba(64, 71, 83, 0.8) 100%);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 25px var(--shadow-color);
+        backdrop-filter: blur(10px);
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .tool-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .tool-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .tool-header i {
+        color: var(--crimson-medium);
+        font-size: 1.5rem;
+    }
+
+    .tool-header h4 {
+        color: var(--text-white);
+        margin: 0;
+        font-weight: 600;
+    }
+
+    /* BOTÓN GUÍA DE USO - ACTUALIZADO CON ROJO CONSISTENTE */
+    .guide-btn {
+        background: linear-gradient(135deg, var(--crimson-dark), var(--crimson-medium));
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 15px rgba(153, 27, 27, 0.3);
+        cursor: pointer;
+    }
+
+    .guide-btn:hover {
+        background: linear-gradient(135deg, var(--crimson-light), var(--crimson-dark));
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(153, 27, 27, 0.4);
+        color: white;
+    }
+
+    .guide-btn:disabled {
+        background: var(--text-muted);
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+        opacity: 0.6;
+    }
+
+    .welcome-text {
+        color: #ffffff;
+        /* Texto principal blanco */
+    }
+
+    /* File Upload Styles - CORREGIDO */
+    .file-upload-section {
+        margin-bottom: 2rem;
+    }
+
+    .file-select-container {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    /* OCULTAR EL INPUT DE ARCHIVO REAL */
+    .file-input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        pointer-events: none;
+    }
+
+    .file-select-btn {
+        width: 100%;
+        min-height: 120px;
+        background: var(--primary-medium);
+        border: 2px dashed var(--border-color);
+        border-radius: 16px;
+        color: var(--text-white);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .file-select-btn:hover {
+        border-color: var(--crimson-medium);
+        background: rgba(153, 27, 27, 0.1);
+    }
+
+    .file-select-btn.file-selected {
+        background: var(--primary-light);
+        border-color: var(--crimson-medium);
+        border-style: solid;
+    }
+
+    .upload-icon {
+        font-size: 2rem;
+        color: var(--crimson-medium);
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .format-info {
+        color: #e2e8f0;
+        /* Más claro */
+        font-size: 0.9rem;
+        margin-top: 8px;
+        /* Separación del borde */
+        padding: 0 16px;
+        /* Separación lateral */
+        text-align: center;
+        line-height: 1.4;
+    }
+
+    .file-selected .format-info {
+        display: none;
+    }
+
+    .selected-file-name {
+        color: var(--crimson-medium);
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+
+    .process-btn {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .process-btn.disabled {
+        background: var(--primary-medium);
+        border: 1px solid var(--border-color);
+        color: var(--text-muted);
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .process-btn:not(.disabled) {
+        background: linear-gradient(135deg, var(--crimson-dark), var(--crimson-medium));
+        border: none;
+        color: var(--text-white);
+        box-shadow: 0 4px 15px rgba(153, 27, 27, 0.3);
+    }
+
+    .process-btn:not(.disabled):hover {
+        background: linear-gradient(135deg, var(--crimson-light), var(--crimson-dark));
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(153, 27, 27, 0.4);
+    }
+
+    /* Drag and Drop Visual Feedback */
+    .file-select-btn.dragover {
+        border-color: var(--crimson-medium);
+        background: rgba(153, 27, 27, 0.1);
+        transform: scale(1.02);
+    }
+
+    .file-select-btn.dragover .upload-icon {
+        color: var(--crimson-light);
+        transform: scale(1.1);
+    }
+
+    /* Linking Tool Styles */
+    .linking-files-grid {
+        display: grid;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .linking-files-grid.files-2 {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .linking-files-grid.files-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .linking-files-grid.files-4 {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .linking-files-grid.files-5 {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .linking-files-grid.files-6 {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .file-input-block {
+        background: var(--primary-medium);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .file-input-block:hover {
+        border-color: var(--crimson-medium);
+        background: rgba(153, 27, 27, 0.05);
+    }
+
+    .file-input-block.has-file {
+        border-color: var(--crimson-medium);
+        background: var(--primary-light);
+    }
+
+    .file-block-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: var(--text-white);
+    }
+
+    .file-block-header i {
+        margin-right: 0.5rem;
+        color: var(--crimson-medium);
+    }
+
+    .file-block-content {
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .processed-files-dropdown {
+        width: 100%;
+        background: var(--primary-base);
+        border: 1px solid var(--border-color);
+        color: var(--text-white);
+        border-radius: 8px;
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .processed-files-dropdown:focus {
+        border-color: var(--crimson-medium);
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(153, 27, 27, 0.25);
+    }
+
+    .processed-files-dropdown option {
+        background: var(--primary-base);
+        color: var(--text-white);
+        padding: 0.5rem;
+    }
+
+    .upload-option {
+        background: var(--primary-base);
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 1.25rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--text-muted);
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .upload-option:hover {
+        border-color: var(--crimson-medium);
+        color: var(--crimson-medium);
+        background: rgba(153, 27, 27, 0.05);
+    }
+
+    .upload-option.has-file {
+        border-style: solid;
+        border-color: var(--crimson-medium);
+        color: var(--text-white);
+        background: var(--primary-medium);
+    }
+
+    .upload-option-divider {
+        text-align: center;
+        margin: 0.75rem 0;
+        position: relative;
+    }
+
+    .upload-option-divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--border-color);
+        z-index: 1;
+    }
+
+    .upload-option-divider span {
+        background: var(--primary-medium);
+        color: var(--text-muted);
+        padding: 0 1rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* File History Styles */
+    .file-history-container {
+        margin-top: 2rem;
+    }
+
+    .history-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.5rem;
+        background: var(--primary-medium);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .history-item:hover {
+        background: var(--primary-light);
+        border-color: var(--crimson-medium);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .history-info {
+        flex: 1;
+    }
+
+    .history-filename {
+        font-weight: 600;
+        color: var(--text-white);
+        margin-bottom: 0.25rem;
+    }
+
+    .history-date {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .download-btn {
+        background: var(--crimson-medium);
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .download-btn:hover {
+        background: var(--crimson-light);
+        transform: scale(1.05);
+    }
+
+    /* Loading Spinner - MEJORADO */
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--crimson-medium);
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Spinner específico para botones de procesamiento */
+    .process-btn .loading-spinner {
+        margin-right: 0.5rem;
+        vertical-align: middle;
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Estados de botones durante procesamiento */
+    .process-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.8;
+    }
+
+    .process-btn:disabled .loading-spinner {
+        border-top-color: var(--text-white);
+    }
+
+    /* Footer */
+    .footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: var(--footer-height);
+        background: linear-gradient(135deg, var(--primary-medium), var(--primary-base));
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 998;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .footer-content {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        text-align: center;
+    }
+
+    .footer-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        :root {
+            --sidebar-width: 280px;
+        }
+
+        .dashboard-header {
+            padding: 0 1rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 1.5rem;
+        }
+
+        #main-content {
+            margin-left: 0;
+            padding: 1rem;
+        }
+
+        #sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        #sidebar.show {
+            transform: translateX(0);
+        }
+
+        .linking-files-grid {
+            grid-template-columns: 1fr !important;
+        }
+
+        .footer-content {
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            padding: 0.5rem;
+        }
+    }
+
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    /* Focus styles for accessibility */
+    .tool-link:focus,
+    .company-folder:focus,
+    .file-select-btn:focus,
+    .process-btn:focus {
+        outline: 2px solid var(--crimson-medium);
+        outline-offset: 2px;
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+        :root {
+            --border-color: #ffffff;
+            --text-muted: #cccccc;
+        }
+    }
+
+    /* Logout button styles */
+    .logout-btn {
+        background: var(--primary-light);
+        border: 1px solid var(--border-color);
+        color: var(--text-light);
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .logout-btn:hover {
+        background: var(--crimson-medium);
+        color: var(--text-white);
+        border-color: var(--crimson-medium);
+    }
+
+    .admin-btn {
+        background: var(--crimson-medium);
+        border: 1px solid var(--crimson-light);
+        color: var(--text-white);
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+    }
+
+    .admin-btn:hover {
+        background: var(--crimson-light);
+        color: var(--text-white);
+        border-color: var(--crimson-light);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(153, 27, 27, 0.3);
+    }
+
+    /* Toast notification styles */
+    .toast-container {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 9999;
+    }
+
+    .toast {
+        background: var(--primary-light);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        min-width: 300px;
+        animation: slideInRight 0.3s ease-out;
+    }
+
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .toast.success {
+        border-left: 4px solid #10b981;
+    }
+
+    .toast.error {
+        border-left: 4px solid #ef4444;
+    }
+
+    .toast.warning {
+        border-left: 4px solid #f59e0b;
+    }
+
+    .toast-header {
+        background: transparent;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-white);
+        padding: 0.75rem 1rem;
+    }
+
+    .toast-body {
+        color: var(--text-light);
+        padding: 1rem;
+    }
+
+    .btn-close-white {
+        filter: invert(1);
+    }
+
+    /* IMPROVED COMPANY FOLDER ANIMATIONS */
+    @keyframes folderOpen {
+        0% {
+            max-height: 0;
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+            border-left-color: transparent;
+        }
+        30% {
+            opacity: 0.3;
+            transform: translateY(-10px) scale(0.97);
+            border-left-color: rgba(96, 108, 128, 0.3);
+        }
+        60% {
+            opacity: 0.7;
+            transform: translateY(-3px) scale(0.99);
+            border-left-color: rgba(96, 108, 128, 0.7);
+        }
+        100% {
+            max-height: 1000px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            border-left-color: var(--border-color);
+        }
+    }
+
+    @keyframes folderClose {
+        0% {
+            max-height: 1000px;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            border-left-color: var(--border-color);
+        }
+        40% {
+            opacity: 0.6;
+            transform: translateY(-5px) scale(0.98);
+            border-left-color: rgba(96, 108, 128, 0.5);
+        }
+        100% {
+            max-height: 0;
+            opacity: 0;
+            transform: translateY(-15px) scale(0.95);
+            border-left-color: transparent;
+        }
+    }
+
+    .company-tools.expanded {
+        animation: folderOpen 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .company-tools.closing {
+        animation: folderClose 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .upload-option-divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: var(--text-muted);
+        margin: 0.75rem 0;
+    }
+
+    .upload-option-divider span {
+        padding: 0 0.5rem;
+    }
+
+    .upload-option-divider::before,
+    .upload-option-divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Spinner específico para botones */
+    .process-btn .loading-spinner {
+        margin-right: 0.5rem;
+        vertical-align: middle;
+    }
+
+    /* PDF VIEWER STYLES */
+    .pdf-viewer-modal .modal-dialog {
+        max-width: 90vw;
+        max-height: 90vh;
+    }
+
+    .pdf-viewer-modal .modal-content {
+        height: 90vh;
+        display: flex;
+        flex-direction: column;
+        background: var(--primary-light);
+        border: 1px solid var(--border-color);
+    }
+
+    .pdf-viewer-modal .modal-body {
+        flex: 1;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .pdf-viewer-container {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    .pdf-viewer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: var(--primary-medium);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .pdf-download-btn {
+        background: var(--crimson-medium);
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .pdf-download-btn:hover {
+        background: var(--crimson-light);
+    }
+</style>
+</head>
+
+<body>
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Login Screen -->
+<div id="loginScreen">
+    <div class="login-background"></div>
+    <div class="login-container">
+        <div class="login-logo">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+        </div>
+        <h2>InsightGrid</h2>
+        <p class="login-subtitle">Plataforma de Análisis de Datos Empresariales</p>
+        <a href="/sso/login" class="btn-sso">
+            <i class="bi bi-google"></i>
+            Iniciar sesión con Google
+        </a>
+        <div class="login-footer">
+            <p>Acceso exclusivo para usuarios autorizados</p>
+            <p>¿Necesitas ayuda? Contacta a <a href="mailto:emiliano.outeda@gmail.com"
+                    class="support-email">emiliano.outeda@gmail.com</a></p>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <h1>
+            <i class="bi bi-grid-3x3-gap-fill app-icon-large"></i>
+            InsightGrid
+        </h1>
+        <div class="header-actions">
+            <div class="user-info">
+                <i class="bi bi-person-circle"></i>
+                <span id="userEmail">Cargando...</span>
+            </div>
+            <div id="adminButton" style="display: none;">
+                <a href="/admin" class="admin-btn">
+                    <i class="bi bi-gear-fill"></i>
+                    Panel Admin
+                </a>
+            </div>
+            <a href="/sso/logout" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Cerrar Sesión
+            </a>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-title">
+            <i class="bi bi-tools me-2"></i>
+            Herramientas
+        </div>
+        <div id="companiesList">
+            <div class="text-center p-4">
+                <div class="loading-spinner"></div>
+                <p class="mt-2 text-muted">Cargando herramientas...</p>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <div id="welcome-content" class="tool-content">
+            <div class="text-center">
+                <i class="bi bi-grid-3x3-gap-fill" style="font-size: 4rem; color: var(--crimson-medium);"></i>
+                <h2 class="mt-3 mb-3 welcome-text">Bienvenido a InsightGrid</h2>
+                <p class="welcome-text">Selecciona una herramienta del panel lateral para comenzar a procesar tus
+                    archivos.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <img src="/static/img/icon.png" alt="EGOS Icon" class="footer-icon">
+            <span>Developed by EGOS - Eclipse Growth Optimization Services</span>
+            <span>Soporte: emiliano.outeda@gmail.com</span>
+        </div>
+    </footer>
+</div>
+
+<!-- PDF Viewer Modal -->
+<div class="modal fade pdf-viewer-modal" id="pdfViewerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header pdf-viewer-header">
+                <h5 class="modal-title" id="pdfViewerTitle">
+                    <i class="bi bi-file-earmark-pdf me-2"></i>
+                    Guía de Uso
+                </h5>
+                <div class="d-flex gap-2">
+                    <button class="pdf-download-btn" id="pdfDownloadBtn" onclick="downloadCurrentPDF()">
+                        <i class="bi bi-download"></i>
+                        Descargar
+                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: invert(1);"></button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <iframe id="pdfViewer" class="pdf-viewer-container" src="/placeholder.svg"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let currentUser = null;
+    let companies = [];
+    let currentTool = null;
+    let selectedFiles = {};
+    let processedFiles = {};
+    let currentPDFToolId = null;
+
+    // Check authentication status
+    async function checkAuth() {
+        try {
+            const response = await fetch('/sso/api/user');
+            if (response.ok) {
+                currentUser = await response.json();
+                document.getElementById('userEmail').textContent = currentUser.name || currentUser.email;
+
+                // Show admin button if user is admin
+                if (currentUser.is_admin) {
+                    document.getElementById('adminButton').style.display = 'block';
+                }
+
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+
+                // Load companies and tools
+                await loadCompanies();
+            } else {
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('dashboard').style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error checking auth:', error);
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('dashboard').style.display = 'none';
+        }
+    }
+
+    // Load companies and tools
+    async function loadCompanies() {
+        try {
+            // Check for permission changes
+            if (typeof (Storage) !== "undefined") {
+                const permissionsChanged = localStorage.getItem('permissions_changed');
+                if (permissionsChanged) {
+                    console.log('🔄 Permissions changed detected, forcing reload...');
+                    localStorage.removeItem('permissions_changed');
+                }
+            }
+
+            const response = await fetch('/api/user/companies', {
+                method: 'GET',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            });
+            if (response.ok) {
+                companies = await response.json();
+                renderCompanies();
+            } else {
+                throw new Error('Error loading companies');
+            }
+        } catch (error) {
+            console.error('Error loading companies:', error);
+            document.getElementById('companiesList').innerHTML = `
+                <div class="text-center p-4">
+                    <i class="bi bi-exclamation-triangle text-warning" style="font-size: 2rem;"></i>
+                    <p class="mt-2 text-muted">Error al cargar herramientas</p>
+                    <button class="btn btn-outline-primary btn-sm" onclick="loadCompanies()">
+                        <i class="bi bi-arrow-clockwise"></i> Reintentar
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    // Render companies with improved animations and folder functionality
+    function renderCompanies() {
+        const container = document.getElementById('companiesList');
+
+        if (companies.length === 0) {
+            container.innerHTML = `
+                <div class="empty-tools-state">
+                    <i class="bi bi-building"></i>
+                    <p>No hay empresas disponibles</p>
+                    <small>Contacta al administrador para obtener acceso</small>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = companies.map(company => {
+            const processingTools = company.tools.filter(tool => tool.tool_type === 'procesamiento');
+            const linkingTools = company.tools.filter(tool => tool.tool_type === 'vinculacion');
+            const totalTools = company.tools.length;
+
+            return `
+                <div class="company-item">
+                    <div class="company-folder" onclick="toggleCompanyFolder(${company.id})" data-company-id="${company.id}">
+                        <i class="bi bi-building-fill"></i>
+                        <span class="company-name">${company.name}</span>
+                        <div class="company-info">
+                            <span class="tools-total">${totalTools}</span>
+                            <i class="bi bi-chevron-right folder-arrow" id="arrow-${company.id}"></i>
+                        </div>
+                    </div>
+                    <div class="company-tools" id="tools-${company.id}">
+                        ${processingTools.length > 0 ? `
+                            <div class="tool-section">
+                                <div class="tool-section-header">
+                                    <i class="bi bi-gear-fill"></i>
+                                    <span>Procesamiento</span>
+                                </div>
+                                <div class="tool-section-content">
+                                    ${processingTools.map(tool => `
+                                        <div class="tool-item">
+                                            <a href="#" class="tool-link" onclick="selectTool(${tool.id}, '${tool.name}', '${tool.tool_type}', ${company.id})" data-tool-id="${tool.id}">
+                                                <i class="bi bi-gear"></i>
+                                                <span class="tool-name">${tool.name}</span>
+                                                <span class="tool-type-badge processing">Proc</span>
+                                            </a>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${linkingTools.length > 0 ? `
+                            <div class="tool-section">
+                                <div class="tool-section-header">
+                                    <i class="bi bi-link-45deg"></i>
+                                    <span>Vinculación</span>
+                                </div>
+                                <div class="tool-section-content">
+                                    ${linkingTools.map(tool => `
+                                        <div class="tool-item">
+                                            <a href="#" class="tool-link" onclick="selectTool(${tool.id}, '${tool.name}', '${tool.tool_type}', ${company.id})" data-tool-id="${tool.id}">
+                                                <i class="bi bi-link-45deg"></i>
+                                                <span class="tool-name">${tool.name}</span>
+                                                <span class="tool-type-badge linking">Link</span>
+                                            </a>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${totalTools === 0 ? `
+                            <div class="empty-tools-state">
+                                <i class="bi bi-tools"></i>
+                                <p>No hay herramientas</p>
+                                <small>Esta empresa no tiene herramientas configuradas</small>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Toggle company folder with smooth animations
+    function toggleCompanyFolder(companyId) {
+        const folder = document.querySelector(`[data-company-id="${companyId}"]`);
+        const toolsContainer = document.getElementById(`tools-${companyId}`);
+        const arrow = document.getElementById(`arrow-${companyId}`);
+
+        const isExpanded = toolsContainer.classList.contains('expanded');
+
+        if (isExpanded) {
+            // Close folder with animation
+            toolsContainer.classList.add('closing');
+            toolsContainer.classList.remove('expanded');
+            arrow.classList.remove('expanded');
+            folder.classList.remove('active');
+            
+            // Remove closing class after animation
+            setTimeout(() => {
+                toolsContainer.classList.remove('closing');
+            }, 400);
+        } else {
+            // Close all other folders first with animations
+            document.querySelectorAll('.company-tools.expanded').forEach(tools => {
+                const otherId = tools.id.replace('tools-', '');
+                const otherArrow = document.getElementById(`arrow-${otherId}`);
+                const otherFolder = document.querySelector(`[data-company-id="${otherId}"]`);
+                
+                tools.classList.add('closing');
+                tools.classList.remove('expanded');
+                if (otherArrow) otherArrow.classList.remove('expanded');
+                if (otherFolder) otherFolder.classList.remove('active');
+                
+                setTimeout(() => {
+                    tools.classList.remove('closing');
+                }, 400);
+            });
+
+            // Small delay before opening the new folder
+            setTimeout(() => {
+                // Open this folder with animation
+                toolsContainer.classList.add('expanded');
+                arrow.classList.add('expanded');
+                folder.classList.add('active');
+            }, 100);
+        }
+    }
+
+    // Select tool
+    async function selectTool(toolId, toolName, toolType, companyId) {
+        // Update active state
+        document.querySelectorAll('.tool-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        document.querySelector(`[data-tool-id="${toolId}"]`).classList.add('active');
+
+        currentTool = { id: toolId, name: toolName, type: toolType, company_id: companyId };
+        selectedFiles = {};
+
+        if (toolType === 'procesamiento') {
+            await loadProcessingTool(toolId);
+        } else if (toolType === 'vinculacion') {
+            await loadLinkingTool(toolId);
+        }
+    }
+
+    // Load processing tool interface
+    async function loadProcessingTool(toolId) {
+        const mainContent = document.getElementById('main-content');
+        mainContent.innerHTML = `
+            <div class="tool-content">
+                <div class="tool-header">
+                    <div class="tool-header-left">
+                        <i class="bi bi-gear-fill"></i>
+                        <h4>${currentTool.name}</h4>
+                    </div>
+                    <button class="guide-btn" onclick="viewToolGuide(${toolId})" id="guideBtn-${toolId}">
+                        <i class="bi bi-book"></i>
+                        Guía de Uso
+                    </button>
+                </div>
+                
+                <div class="file-upload-section">
+                    <h5 class="mb-3">Subir Archivo</h5>
+                    <div class="file-select-container">
+                        <div class="file-select-btn" onclick="document.getElementById('fileInput').click()" 
+                             ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                            <i class="bi bi-cloud-upload upload-icon"></i>
+                            <div class="btn-text">Seleccionar archivo</div>
+                            <div class="format-info">
+                                Formatos soportados: Excel (.xlsx, .xls), CSV (.csv)<br>
+                                Tamaño máximo: 50MB
+                            </div>
+                            <div class="selected-file-name" id="selectedFileName" style="display: none;"></div>
+                        </div>
+                        <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls,.csv" onchange="handleFileSelect(event)">
+                    </div>
+                    <button class="btn process-btn disabled" id="processBtn" onclick="processFile()" disabled>
+                        <i class="bi bi-play-circle me-2"></i>
+                        Procesar Archivo
+                    </button>
+                </div>
+                
+                <div class="file-history-container">
+                    <h5 class="mb-3">Historial de Archivos</h5>
+                    <div id="fileHistory">
+                        <div class="text-center p-4">
+                            <div class="loading-spinner"></div>
+                            <p class="mt-2 text-muted">Cargando historial...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        await loadFileHistory(toolId);
+        await checkToolGuide(toolId);
+    }
+
+    // Load linking tool interface
+    async function loadLinkingTool(toolId) {
+        try {
+            const response = await fetch(`/api/tools/${toolId}/config`);
+            if (!response.ok) throw new Error('Error loading tool config');
+
+            const config = await response.json();
+            const mainContent = document.getElementById('main-content');
+
+            // Generate file input blocks based on configuration
+            const fileBlocks = [];
+            for (let i = 0; i < config.total_files; i++) {
+                const fileConfig = config.file_config[i];
+                if (fileConfig && fileConfig.type === 'linked') {
+                    // Usar el nombre personalizado del archivo
+                    const fileName = fileConfig.name || `Archivo ${i + 1}`;
+                    
+                    fileBlocks.push(`
+                        <div class="file-input-block" data-file-index="${i}">
+                            <div class="file-block-header">
+                                <i class="bi bi-link-45deg"></i>
+                                ${fileName}
+                            </div>
+                            <div class="file-block-content">
+                                <select class="processed-files-dropdown" id="fileSelect${i}" onchange="handleLinkingFileSelect(${i}, this.value, 'processed')">
+                                    <option value="">Seleccionar archivo procesado...</option>
+                                </select>
+                                <div class="upload-option-divider">
+                                    <span>O</span>
+                                </div>
+                                <div class="upload-option" onclick="document.getElementById('linkingFileInput${i}').click()" id="uploadOption${i}">
+                                    <i class="bi bi-cloud-upload"></i>
+                                    <div>Subir archivo desde ordenador</div>
+                                    <small>Excel, CSV (máx. 50MB)</small>
+                                </div>
+                                <input type="file" id="linkingFileInput${i}" class="file-input" accept=".xlsx,.xls,.csv" onchange="handleLinkingUpload(${i}, event)">
+                            </div>
+                        </div>
+                    `);
+                } else {
+                    // Usar el nombre personalizado para archivos adicionales
+                    const fileName = fileConfig && fileConfig.name ? fileConfig.name : `Archivo adicional ${i + 1}`;
+                    fileBlocks.push(`
+                        <div class="file-input-block" data-file-index="${i}">
+                            <div class="file-block-header">
+                                <i class="bi bi-cloud-upload"></i>
+                                ${fileName}
+                            </div>
+                            <div class="file-block-content">
+                                <div class="upload-option" onclick="document.getElementById('linkingFileInput${i}').click()" id="uploadOption${i}">
+                                    <i class="bi bi-cloud-upload"></i>
+                                    <div>Seleccionar archivo</div>
+                                    <small>Excel, CSV (máx. 50MB)</small>
+                                </div>
+                                <input type="file" id="linkingFileInput${i}" class="file-input" accept=".xlsx,.xls,.csv" onchange="handleLinkingUpload(${i}, event)">
+                            </div>
+                        </div>
+                    `);
+                }
+            }
+
+            mainContent.innerHTML = `
+                <div class="tool-content">
+                    <div class="tool-header">
+                        <div class="tool-header-left">
+                            <i class="bi bi-link-45deg"></i>
+                            <h4>${currentTool.name}</h4>
+                        </div>
+                        <button class="guide-btn" onclick="viewToolGuide(${toolId})" id="guideBtn-${toolId}">
+                            <i class="bi bi-book"></i>
+                            Guía de Uso
+                        </button>
+                    </div>
+                    
+                    <div class="file-upload-section">
+                        <h5 class="mb-3">Configurar Archivos (${config.total_files} archivos requeridos)</h5>
+                        <div class="linking-files-grid files-${config.total_files}">
+                            ${fileBlocks.join('')}
+                        </div>
+                        <button class="btn process-btn disabled" id="processBtn" onclick="processLinkingFiles()" disabled>
+                            <i class="bi bi-link me-2"></i>
+                            Vincular Archivos
+                        </button>
+                    </div>
+                
+                    <div class="file-history-container">
+                        <h5 class="mb-3">Historial de Archivos</h5>
+                        <div id="fileHistory">
+                            <div class="text-center p-4">
+                                <div class="loading-spinner"></div>
+                                <p class="mt-2 text-muted">Cargando historial...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Load processed files for linked inputs
+            await loadProcessedFilesForLinking(config);
+            await loadFileHistory(toolId);
+            await checkToolGuide(toolId);
+
+        } catch (error) {
+            console.error('Error loading linking tool:', error);
+            showToast('Error al cargar la herramienta de vinculación', 'error');
+        }
+    }
+
+    // Check if tool has PDF guide
+    async function checkToolGuide(toolId) {
+        try {
+            const response = await fetch(`/api/tools/${toolId}/has-guide`);
+            const data = await response.json();
+            
+            const guideBtn = document.getElementById(`guideBtn-${toolId}`);
+            if (data.has_guide) {
+                guideBtn.disabled = false;
+                guideBtn.title = `Ver guía: ${data.filename}`;
+            } else {
+                guideBtn.disabled = true;
+                guideBtn.title = 'No hay guía disponible para esta herramienta';
+            }
+        } catch (error) {
+            console.error('Error checking tool guide:', error);
+            const guideBtn = document.getElementById(`guideBtn-${toolId}`);
+            if (guideBtn) {
+                guideBtn.disabled = true;
+                guideBtn.title = 'Error al verificar guía';
+            }
+        }
+    }
+
+    // View tool guide
+    function viewToolGuide(toolId) {
+        const modal = document.getElementById('pdfViewerModal');
+        const viewer = document.getElementById('pdfViewer');
+        
+        viewer.src = `/api/tools/${toolId}/view-guide`;
+        currentPDFToolId = toolId;
+        
+        new bootstrap.Modal(modal).show();
+    }
+
+    // Download current PDF
+    function downloadCurrentPDF() {
+        if (currentPDFToolId) {
+            window.open(`/api/tools/${currentPDFToolId}/download-guide`, '_blank');
+        }
+    }
+
+    // Load processed files for linking tool dropdowns
+    async function loadProcessedFilesForLinking(config) {
+        console.log('🔄 Loading processed files for linking tool...');
+
+        for (let i = 0; i < config.total_files; i++) {
+            const fileConfig = config.file_config[i];
+            if (fileConfig && fileConfig.type === 'linked' && fileConfig.tool_id) {
+                try {
+                    console.log(`📥 Loading files for tool ${fileConfig.tool_id} (${fileConfig.name || 'Unknown'})`);
+                    const response = await fetch(`/api/tools/${fileConfig.tool_id}/processed-files`);
+                    if (response.ok) {
+                        const files = await response.json();
+                        const select = document.getElementById(`fileSelect${i}`);
+                        
+                        if (select) {
+                            // Clear existing options except the first one
+                            select.innerHTML = '<option value="">Seleccionar archivo procesado...</option>';
+                            
+                            if (files.length > 0) {
+                                files.forEach(file => {
+                                    const option = document.createElement('option');
+                                    option.value = file.id;
+                                    option.textContent = `${file.processed_filename} (${formatDate(file.processed_at)}) - ${file.user_username}`;
+                                    select.appendChild(option);
+                                });
+                                console.log(`✅ Loaded ${files.length} files for tool ${fileConfig.tool_id}`);
+                            } else {
+                                const option = document.createElement('option');
+                                option.value = '';
+                                option.textContent = 'No hay archivos procesados disponibles';
+                                option.disabled = true;
+                                select.appendChild(option);
+                                console.log(`⚠️ No files found for tool ${fileConfig.tool_id}`);
+                            }
+                        }
+                    } else {
+                        console.error(`❌ Error loading files for tool ${fileConfig.tool_id}: ${response.status}`);
+                        const select = document.getElementById(`fileSelect${i}`);
+                        if (select) {
+                            select.innerHTML = '<option value="">Error al cargar archivos</option>';
+                        }
+                    }
+                } catch (error) {
+                    console.error(`❌ Error loading files for tool ${fileConfig.tool_id}:`, error);
+                    const select = document.getElementById(`fileSelect${i}`);
+                    if (select) {
+                        select.innerHTML = '<option value="">Error de conexión</option>';
+                    }
+                }
+            }
+        }
+    }
+
+    // Handle file selection for processing tools
+    function handleFileSelect(event) {
+        const file = event.target.files[0];
+        const fileSelectBtn = document.querySelector('.file-select-btn');
+        const selectedFileName = document.getElementById('selectedFileName');
+        const processBtn = document.getElementById('processBtn');
+
+        if (file) {
+            selectedFiles.main = file;
+            fileSelectBtn.classList.add('file-selected');
+            selectedFileName.textContent = file.name;
+            selectedFileName.style.display = 'block';
+            
+            processBtn.classList.remove('disabled');
+            processBtn.disabled = false;
+        } else {
+            delete selectedFiles.main;
+            fileSelectBtn.classList.remove('file-selected');
+            selectedFileName.style.display = 'none';
+            
+            processBtn.classList.add('disabled');
+            processBtn.disabled = true;
+        }
+    }
+
+    // Handle file selection for linking tools
+    function handleLinkingFileSelect(index, fileId, type = 'processed') {
+        if (fileId && type === 'processed') {
+            selectedFiles[index] = { type: 'processed', id: fileId };
+            // Clear upload option if processed file is selected
+            const uploadOption = document.getElementById(`uploadOption${index}`);
+            const fileInput = document.getElementById(`linkingFileInput${index}`);
+            if (uploadOption && fileInput) {
+                uploadOption.classList.remove('has-file');
+                uploadOption.innerHTML = `
+                    <i class="bi bi-cloud-upload"></i>
+                    <div>Subir archivo desde ordenador</div>
+                    <small>Excel, CSV (máx. 50MB)</small>
+                `;
+                fileInput.value = '';
+            }
+        } else {
+            delete selectedFiles[index];
+        }
+        validateLinkingForm();
+    }
+
+    // Handle file upload for linking tools
+    function handleLinkingUpload(index, event) {
+        const file = event.target.files[0];
+        const uploadOption = document.getElementById(`uploadOption${index}`);
+        const fileSelect = document.getElementById(`fileSelect${index}`);
+
+        if (file) {
+            selectedFiles[index] = { type: 'upload', file: file };
+            uploadOption.classList.add('has-file');
+            uploadOption.innerHTML = `
+                <i class="bi bi-check-circle"></i>
+                <div>${file.name}</div>
+                <small>Archivo seleccionado</small>
+            `;
+            // Clear processed file selection if upload is selected
+            if (fileSelect) {
+                fileSelect.value = '';
+            }
+        } else {
+            delete selectedFiles[index];
+            uploadOption.classList.remove('has-file');
+            uploadOption.innerHTML = `
+                <i class="bi bi-cloud-upload"></i>
+                <div>Subir archivo desde ordenador</div>
+                <small>Excel, CSV (máx. 50MB)</small>
+            `;
+        }
+        validateLinkingForm();
+    }
+
+    // Validate linking form
+    function validateLinkingForm() {
+        const processBtn = document.getElementById('processBtn');
+        const totalFiles = document.querySelectorAll('.file-input-block').length;
+        const selectedCount = Object.keys(selectedFiles).length;
+
+        if (selectedCount === totalFiles) {
+            processBtn.classList.remove('disabled');
+            processBtn.disabled = false;
+        } else {
+            processBtn.classList.add('disabled');
+            processBtn.disabled = true;
+        }
+    }
+
+    // Process file for processing tools
+    async function processFile() {
+        if (!selectedFiles.main || !currentTool) return;
+
+        const processBtn = document.getElementById('processBtn');
+        const originalText = processBtn.innerHTML;
+
+        processBtn.disabled = true;
+        processBtn.innerHTML = '<div class="loading-spinner"></div> Procesando...';
+
+        try {
+            const formData = new FormData();
+            formData.append('file', selectedFiles.main);
+
+            console.log(`🔧 Processing file: ${selectedFiles.main.name} with tool ID: ${currentTool.id}`);
+
+            const response = await fetch(`/api/tools/${currentTool.id}/process`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                // Handle file download
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                // Get filename from response headers
+                const contentDisposition = response.headers.get('content-disposition');
+                let filename = 'archivo_procesado.xlsx';
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename=(.+)/);
+                    if (filenameMatch) {
+                        filename = filenameMatch[1].replace(/"/g, '');
+                    }
+                }
+                
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                
+                showToast('Archivo procesado y descargado correctamente', 'success');
+                
+                // Reset form
+                document.getElementById('fileInput').value = '';
+                document.querySelector('.file-select-btn').classList.remove('file-selected');
+                document.getElementById('selectedFileName').style.display = 'none';
+                processBtn.classList.add('disabled');
+                processBtn.disabled = true;
+                selectedFiles = {};
+                
+                // Reload history after a short delay to allow DB commit
+                setTimeout(async () => {
+                    await loadFileHistory(currentTool.id);
+                }, 1000);
+            } else {
+                const errorText = await response.text();
+                console.error('❌ Processing error:', errorText);
+                showToast(`Error al procesar archivo: ${errorText}`, 'error');
+            }
+        } catch (error) {
+            console.error('❌ Error processing file:', error);
+            showToast('Error de conexión al procesar archivo', 'error');
+        } finally {
+            processBtn.disabled = false;
+            processBtn.innerHTML = originalText;
+        }
+    }
+
+    // Process linking files
+    async function processLinkingFiles() {
+        if (!currentTool || Object.keys(selectedFiles).length === 0) return;
+
+        const processBtn = document.getElementById('processBtn');
+        const originalText = processBtn.innerHTML;
+
+        processBtn.disabled = true;
+        processBtn.innerHTML = '<div class="loading-spinner"></div> Vinculando...';
+
+        try {
+            const formData = new FormData();
+            
+            // Add processed file IDs and uploaded files
+            Object.entries(selectedFiles).forEach(([index, fileData]) => {
+                if (fileData.type === 'processed') {
+                    formData.append(`processed_file_${index}`, fileData.id);
+                    console.log(`📎 Adding processed file ${fileData.id} for position ${index}`);
+                } else if (fileData.type === 'upload') {
+                    formData.append(`upload_file_${index}`, fileData.file);
+                    console.log(`📎 Adding uploaded file ${fileData.file.name} for position ${index}`);
+                }
+            });
+
+            const response = await fetch(`/api/tools/${currentTool.id}/process-linking`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                // Handle file download
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                // Get filename from response headers
+                const contentDisposition = response.headers.get('content-disposition');
+                let filename = 'archivo_vinculado.xlsx';
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename=(.+)/);
+                    if (filenameMatch) {
+                        filename = filenameMatch[1].replace(/"/g, '');
+                    }
+                }
+                
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                
+                showToast('Archivos vinculados y descargados correctamente', 'success');
+                
+                // Reset form
+                selectedFiles = {};
+                document.querySelectorAll('.processed-files-dropdown').forEach(select => {
+                    select.value = '';
+                });
+                document.querySelectorAll('input[type="file"]').forEach(input => {
+                    input.value = '';
+                });
+                document.querySelectorAll('.upload-option').forEach(option => {
+                    option.classList.remove('has-file');
+                    option.innerHTML = `
+                        <i class="bi bi-cloud-upload"></i>
+                        <div>Subir archivo desde ordenador</div>
+                        <small>Excel, CSV (máx. 50MB)</small>
+                    `;
+                });
+                
+                // Reload history
+                await loadFileHistory(currentTool.id);
+            } else {
+                const error = await response.text();
+                showToast(`Error al vincular archivos: ${error}`, 'error');
+            }
+        } catch (error) {
+            console.error('Error processing linking files:', error);
+            showToast('Error de conexión', 'error');
+        } finally {
+            processBtn.disabled = false;
+            processBtn.innerHTML = originalText;
+            validateLinkingForm();
+        }
+    }
+
+    // Load file history
+    async function loadFileHistory(toolId) {
+        try {
+            const response = await fetch(`/api/tools/${toolId}/history`);
+            if (response.ok) {
+                const files = await response.json();
+                renderFileHistory(files);
+            } else {
+                throw new Error('Error loading history');
+            }
+        } catch (error) {
+            console.error('Error loading file history:', error);
+            document.getElementById('fileHistory').innerHTML = `
+                <div class="text-center p-4">
+                    <i class="bi bi-exclamation-triangle text-warning"></i>
+                    <p class="mt-2 text-muted">Error al cargar historial</p>
+                </div>
+            `;
+        }
+    }
+
+    // Render file history
+    function renderFileHistory(files) {
+        const container = document.getElementById('fileHistory');
+
+        if (files.length === 0) {
+            container.innerHTML = `
+                <div class="text-center p-4">
+                    <i class="bi bi-file-earmark-x" style="font-size: 2rem; color: var(--text-muted);"></i>
+                    <p class="mt-2 text-muted">No hay archivos procesados</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = files.map(file => `
+            <div class="history-item">
+                <div class="history-info">
+                    <div class="history-filename">${file.processed_filename}</div>
+                    <div class="history-date">${formatDate(file.processed_at)}</div>
+                </div>
+                <button class="download-btn" onclick="downloadFile(${file.id})">
+                    <i class="bi bi-download"></i>
+                    Descargar
+                </button>
+            </div>
+        `).join('');
+    }
+
+    // Download file
+    async function downloadFile(fileId) {
+        try {
+            console.log(`📥 Attempting to download file ID: ${fileId}`);
+            
+            const response = await fetch(`/api/files/download/${fileId}`);
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                // Get filename from response headers
+                const contentDisposition = response.headers.get('content-disposition');
+                let filename = 'archivo.xlsx';
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename=(.+)/);
+                    if (filenameMatch) {
+                        filename = filenameMatch[1].replace(/"/g, '');
+                    }
+                }
+                
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                
+                showToast('Archivo descargado correctamente', 'success');
+            } else {
+                console.error(`❌ Download failed with status: ${response.status}`);
+                const errorText = await response.text();
+                console.error(`❌ Error details: ${errorText}`);
+                showToast('Error al descargar archivo', 'error');
+            }
+        } catch (error) {
+            console.error('❌ Error downloading file:', error);
+            showToast('Error de conexión al descargar', 'error');
+        }
+    }
+
+    // Drag and drop handlers
+    function handleDrop(event) {
+        event.preventDefault();
+        event.currentTarget.classList.remove('dragover');
+        
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            const fileInput = document.getElementById('fileInput');
+            
+            // Create a new FileList with the dropped file
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            fileInput.files = dt.files;
+            
+            // Trigger the change event
+            handleFileSelect({ target: { files: [file] } });
+        }
+    }
+
+    function handleDragOver(event) {
+        event.preventDefault();
+        event.currentTarget.classList.add('dragover');
+    }
+
+    function handleDragLeave(event) {
+        event.preventDefault();
+        event.currentTarget.classList.remove('dragover');
+    }
+
+    // Utility functions
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    function showToast(message, type = 'success') {
+        const toastContainer = document.getElementById('toastContainer');
+        const toastId = 'toast-' + Date.now();
+
+        const toast = document.createElement('div');
+        toast.id = toastId;
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+            <div class="toast-header">
+                <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                <strong class="me-auto">${type === 'success' ? 'Éxito' : type === 'error' ? 'Error' : 'Información'}</strong>
+                <button type="button" class="btn-close btn-close-white ms-2" onclick="removeToast('${toastId}')"></button>
+            </div>
+            <div class="toast-body">
+                ${message}
+            </div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        // Auto remove after 5 seconds
+        setTimeout(() => removeToast(toastId), 5000);
+    }
+
+    function removeToast(toastId) {
+        const toast = document.getElementById(toastId);
+        if (toast) {
+            toast.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+        checkAuth();
+        
+        // Check for permission changes periodically
+        setInterval(() => {
+            if (typeof (Storage) !== "undefined") {
+                const permissionsChanged = localStorage.getItem('permissions_changed');
+                if (permissionsChanged) {
+                    console.log('🔄 Permissions changed detected, reloading companies...');
+                    loadCompanies();
+                    localStorage.removeItem('permissions_changed');
+                }
+            }
+        }, 2000);
+    });
+</script>
+</body>
+
+</html>
