@@ -43,3 +43,4 @@ InsightGrid allows authenticated users to:
 - All tools must expose either `process_file()` or `process_files()` in the dynamically imported module.
 - Tool access is scoped per user/company.
 - Admin can view all data; regular users only see assigned companies/tools.
+- Procfile and railway.json exist due to Railway deploy
