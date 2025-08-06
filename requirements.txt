@@ -1,0 +1,32 @@
+# Core de FastAPI y servidor
+fastapi
+uvicorn
+
+# Templates, formularios, sesiones
+jinja2
+python-multipart
+itsdangerous
+starlette
+
+# Manejo de archivos Excel y CSV
+pandas
+openpyxl
+python-dateutil
+xlrd
+
+# Autenticación
+fastapi-login
+fastapi-sso
+authlib
+
+# UUID y path seguro
+python-slugify
+
+# ORM
+asyncpg
+
+# Base de datos
+sqlalchemy
+psycopg2-binary
+python-dotenv
+
