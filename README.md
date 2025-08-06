@@ -6,6 +6,8 @@ InsightGrid is a modular data processing backend for enterprise use, built with 
 
 I'm currently translating all comments from spanish (my mother language) to enlgish for simplicity. Be patient or use Google Translate.
 
+Some files (such as .html files), file names or console logs will continue to be written in spanish because (right now) all users are native spanish speakers and i'm the only one debugging this.
+
 ## 🔍 Overview
 
 > ⚠️ This is **Version 2**. The previous codebase was discarded due to the presence of sensitive and legacy data. This version is clean, modular, and more maintainable.
