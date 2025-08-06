@@ -30,6 +30,7 @@ InsightGrid allows authenticated users to:
 - **SessionMiddleware** – User session management
 - **Dynamic Importing** – For tool processing logic
 - **SSO Authentication** – With session-based login
+- **pandas** for Data Treatment
 
 ## 📁 Features
 
