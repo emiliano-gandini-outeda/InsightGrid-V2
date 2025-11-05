@@ -236,7 +236,7 @@ def process_csv_diario_ventas(file_path):
     except Exception as e:
         raise Exception(f"Error al procesar CSV Diario de Ventas: {str(e)}")
 
-def process_file_diario_ventas(file_path, return_bytes=False):
+def process_file(file_path, return_bytes=False):
     """
     Función principal compatible con el flujo del script original
     
@@ -424,7 +424,7 @@ def main():
             print("Error: El archivo no existe.")
             return
         
-        output_path = process_file_diario_ventas(file_path)
+        output_path = process_file(file_path)
         print(f"\n¡Procesamiento completado exitosamente!")
         print(f"Archivo guardado en: {output_path}")
         
