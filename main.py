@@ -85,6 +85,9 @@ def get_process_vendedor_vinculado():
 def get_process_utilidades():
     return get_processor("utilidades", "utilidades")
 
+def get_process_ventas_periodo():
+    return get_processor("ventas_periodo", "ventas-csv")
+
 from contextlib import asynccontextmanager
 import uvicorn
 
@@ -167,7 +170,8 @@ PROCESSORS = {
     "cruce-ventas": lambda: get_process_cruce_ventas(),
     "vendedores": lambda: get_process_vendedores(),
     "vendedor-vinculado": lambda: get_process_vendedor_vinculado(),
-    "utilidades": lambda: get_process_utilidades()
+    "utilidades": lambda: get_process_utilidades(),
+    "ventas-csv": lambda: get_process_ventas_periodo()
 }
 
 async def create_initial_data():
@@ -315,7 +319,8 @@ async def get_user_companies(request: Request, db: Session = Depends(get_db)):
                 "cruce_ventas.py": "cruce-ventas",
                 "vendedores.py": "vendedores",  
                 "vendedor_vinculado.py": "vendedor-vinculado",
-                "utilidades.py": "utilidades"
+                "utilidades.py": "utilidades",
+                "ventas-csv.py": "ventas-csv"
             }
         
             tools_data = []
