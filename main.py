@@ -71,7 +71,7 @@ def get_process_ventas():
     return get_processor("ventas", "ventas")
 
 def get_process_ventas_csv():
-    return get_processor("ventas-csv", "ventas-csv")
+    return get_processor("ventas_csv", "ventas-csv")
 
 def get_process_lista_precios():
     return get_processor("lista_precios", "lista_precios")
