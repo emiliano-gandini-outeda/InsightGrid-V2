@@ -236,20 +236,11 @@ def process_csv_diario_ventas(file_path):
     except Exception as e:
         raise Exception(f"Error al procesar CSV Diario de Ventas: {str(e)}")
 
-def process_file(file_path, return_bytes=False):
+def process_file_diario_ventas(file_path):
     """
-    Función principal compatible con el flujo del script original
-    
-    Args:
-        file_path: Ruta del archivo CSV a procesar
-        return_bytes: Si True, devuelve bytes del archivo en lugar de guardarlo
-    
-    Returns:
-        Si return_bytes=True: tupla (bytes_data, filename)
-        Si return_bytes=False: ruta del archivo guardado
+    Función compatible con la interfaz del sistema principal
     """
     try:
-        # Procesar el archivo
         processed_data = process_csv_diario_ventas(file_path)
         
         # Crear DataFrame
@@ -282,54 +273,47 @@ def process_file(file_path, return_bytes=False):
         # Generar nombre de archivo de salida
         base_filename = os.path.splitext(os.path.basename(file_path))[0]
         output_filename = f"{base_filename}_PROCESADO.xlsx"
+        output_path = os.path.join(os.path.dirname(file_path), output_filename)
         
-        if return_bytes:
-            # Devolver como bytes para aplicaciones web
-            output_buffer = BytesIO()
-            with pd.ExcelWriter(output_buffer, engine='openpyxl') as writer:
-                df.to_excel(writer, sheet_name='Ventas Procesadas', index=False)
-                
-                # Ajustar ancho de columnas
-                worksheet = writer.sheets['Ventas Procesadas']
-                for column in worksheet.columns:
-                    max_length = 0
-                    column_letter = column[0].column_letter
-                    for cell in column:
-                        try:
-                            if len(str(cell.value)) > max_length:
-                                max_length = len(str(cell.value))
-                        except:
-                            pass
-                    adjusted_width = min(max_length + 2, 50)
-                    worksheet.column_dimensions[column_letter].width = adjusted_width
+        with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name='Ventas Procesadas', index=False)
             
-            output_buffer.seek(0)
-            return output_buffer.getvalue(), output_filename
-        else:
-            # Guardar archivo localmente
-            output_path = os.path.join(os.path.dirname(file_path), output_filename)
-            
-            with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
-                df.to_excel(writer, sheet_name='Ventas Procesadas', index=False)
-                
-                # Ajustar ancho de columnas
-                worksheet = writer.sheets['Ventas Procesadas']
-                for column in worksheet.columns:
-                    max_length = 0
-                    column_letter = column[0].column_letter
-                    for cell in column:
-                        try:
-                            if len(str(cell.value)) > max_length:
-                                max_length = len(str(cell.value))
-                        except:
-                            pass
-                    adjusted_width = min(max_length + 2, 50)
-                    worksheet.column_dimensions[column_letter].width = adjusted_width
-            
-            return output_path
-            
+            # Ajustar ancho de columnas
+            worksheet = writer.sheets['Ventas Procesadas']
+            for column in worksheet.columns:
+                max_length = 0
+                column_letter = column[0].column_letter
+                for cell in column:
+                    try:
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(str(cell.value))
+                    except:
+                        pass
+                adjusted_width = min(max_length + 2, 50)
+                worksheet.column_dimensions[column_letter].width = adjusted_width
+        
+        return output_path
+        
     except Exception as e:
-        raise Exception(f"Error al procesar el archivo: {str(e)}")
+        raise Exception(f"Error al procesar archivo: {str(e)}")
+
+# Función principal que será llamada por el sistema
+def process_file(file_path, return_bytes=False):
+    """
+    Función principal compatible con el sistema
+    """
+    try:
+        if return_bytes:
+            # Para uso web
+            with open(file_path, 'rb') as f:
+                file_bytes = f.read()
+            bytes_data, filename = process_sales_data_for_webapp_diario(file_bytes, os.path.basename(file_path))
+            return bytes_data, filename
+        else:
+            # Para uso local
+            return process_file_diario_ventas(file_path)
+    except Exception as e:
+        raise Exception(f"Error en process_file: {str(e)}")
 
 def process_sales_data_for_webapp_diario(file_bytes, original_filename):
     """
@@ -424,7 +408,7 @@ def main():
             print("Error: El archivo no existe.")
             return
         
-        output_path = process_file(file_path)
+        output_path = process_file_diario_ventas(file_path)
         print(f"\n¡Procesamiento completado exitosamente!")
         print(f"Archivo guardado en: {output_path}")
         
