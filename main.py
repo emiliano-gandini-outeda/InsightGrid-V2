@@ -70,6 +70,9 @@ def get_process_inventario():
 def get_process_ventas():
     return get_processor("ventas", "ventas")
 
+def get_process_ventas_csv():
+    return get_processor("ventas_csv", "ventas_csv")
+
 def get_process_lista_precios():
     return get_processor("lista_precios", "lista_precios")
 
@@ -84,9 +87,6 @@ def get_process_vendedor_vinculado():
 
 def get_process_utilidades():
     return get_processor("utilidades", "utilidades")
-
-def get_process_ventas_periodo():
-    return get_processor("ventas_periodo", "ventas-csv")
 
 from contextlib import asynccontextmanager
 import uvicorn
@@ -166,12 +166,12 @@ PROCESSORS = {
     "facturacion": lambda: get_process_facturacion(),
     "inventario": lambda: get_process_inventario(),
     "ventas": lambda: get_process_ventas(),
+    "ventas-csv": lambda: get_process_ventas_csv(),
     "lista-precios": lambda: get_process_lista_precios(),
     "cruce-ventas": lambda: get_process_cruce_ventas(),
     "vendedores": lambda: get_process_vendedores(),
     "vendedor-vinculado": lambda: get_process_vendedor_vinculado(),
-    "utilidades": lambda: get_process_utilidades(),
-    "ventas-csv": lambda: get_process_ventas_periodo()
+    "utilidades": lambda: get_process_utilidades()
 }
 
 async def create_initial_data():
@@ -315,12 +315,12 @@ async def get_user_companies(request: Request, db: Session = Depends(get_db)):
                 "facturacion.py": "facturacion", 
                 "inventario.py": "inventario",
                 "ventas.py": "ventas",
+                "ventas_csv.py": "ventas-csv",
                 "lista_precios.py": "lista-precios",
                 "cruce_ventas.py": "cruce-ventas",
                 "vendedores.py": "vendedores",  
                 "vendedor_vinculado.py": "vendedor-vinculado",
-                "utilidades.py": "utilidades",
-                "ventas-csv.py": "ventas-csv"
+                "utilidades.py": "utilidades"
             }
         
             tools_data = []
@@ -579,6 +579,7 @@ async def process_tool_file(
             "facturacion.py": "facturacion", 
             "inventario.py": "inventario",
             "ventas.py": "ventas",
+            "ventas_csv.py": "ventas-csv",
             "lista_precios.py": "lista-precios",
             "vendedores.py": "vendedores",
             "utilidades.py": "utilidades"
@@ -839,7 +840,7 @@ async def check_tool_guide(
         }
         
     except HTTPException:
-        raise
+        ře
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")
 
@@ -913,5 +914,4 @@ async def download_tool_guide(
 
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 8080))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
