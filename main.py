@@ -22,6 +22,27 @@ from auth.sso import router as sso_router
 # Dynamic import system with error handling
 MODULE_PREFIX_A = os.environ.get("MODULE_PREFIX_A")
 
+# Dynamic import system with error handling
+MODULE_PREFIX_A = os.environ.get("MODULE_PREFIX_A")
+print(f"🔍 DEBUG: MODULE_PREFIX_A = {MODULE_PREFIX_A}")
+
+def import_process_file(module_name):
+    try:
+        if not MODULE_PREFIX_A:
+            raise ImportError(f"MODULE_PREFIX_A environment variable not set")
+        full_module = f"{MODULE_PREFIX_A}.{module_name}"
+        print(f"🔍 DEBUG: Importing from: {full_module}")
+        module = importlib.import_module(full_module)
+        print(f"🔍 DEBUG: Module imported successfully: {module}")
+        processor = getattr(module, "process_file")
+        print(f"🔍 DEBUG: Processor function found: {processor}")
+        return processor
+    except Exception as e:
+        print(f"⚠️ Warning: Could not import {module_name}: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return None
+
 def import_process_file(module_name):
     try:
         if not MODULE_PREFIX_A:
@@ -315,7 +336,7 @@ async def get_user_companies(request: Request, db: Session = Depends(get_db)):
                 "facturacion.py": "facturacion", 
                 "inventario.py": "inventario",
                 "ventas.py": "ventas",
-                "ventas-csv.py": "ventas-csv",
+                "ventas-csv.py": "ventas-csv",  # ← Asegúrate que esto esté así
                 "lista_precios.py": "lista-precios",
                 "cruce_ventas.py": "cruce-ventas",
                 "vendedores.py": "vendedores",  
@@ -337,7 +358,7 @@ async def get_user_companies(request: Request, db: Session = Depends(get_db)):
                     "tool_type": tool_type
                 })
                 
-                print(f"🔧 Tool: {tool.name} (ID: {tool.id}) - Type: {tool_type} - Key: {tool_key}")
+                print(f"🔧 Tool: {tool.name} (ID: {tool.id}) - Filename: {tool.filename} - Type: {tool_type} - Key: {tool_key}")
         
             companies_data.append({
                 "id": company.id,
@@ -345,8 +366,6 @@ async def get_user_companies(request: Request, db: Session = Depends(get_db)):
                 "folder_name": company.folder_name,
                 "tools": tools_data
             })
-        
-            print(f"📁 Company: {company.name} - {len(tools_data)} tools")
     
         print(f"📤 Returning {len(companies_data)} companies to frontend")
         return companies_data
@@ -579,15 +598,19 @@ async def process_tool_file(
             "facturacion.py": "facturacion", 
             "inventario.py": "inventario",
             "ventas.py": "ventas",
-            "ventas_csv.py": "ventas-csv",
+            "ventas-csv.py": "ventas-csv",  # ← Asegúrate que esto esté así
             "lista_precios.py": "lista-precios",
             "vendedores.py": "vendedores",
             "utilidades.py": "utilidades"
         }
     
         tool_key = tool_mapping.get(tool_obj.filename)
+        print(f"🔍 DEBUG: Tool filename: '{tool_obj.filename}'")
+        print(f"🔍 DEBUG: Mapped tool key: '{tool_key}'")
+        print(f"🔍 DEBUG: Available processors: {list(PROCESSORS.keys())}")
+        
         if not tool_key or tool_key not in PROCESSORS:
-            raise HTTPException(status_code=400, detail=f"Procesador no encontrado para la herramienta '{tool_obj.filename}'")
+            raise HTTPException(status_code=400, detail=f"Procesador no encontrado para la herramienta '{tool_obj.filename}'. Key: '{tool_key}'")
     
         print(f"🔧 Processing file with tool: {tool_obj.name} (ID: {tool_id}) - Processor: {tool_key}")
     
@@ -604,12 +627,17 @@ async def process_tool_file(
         try:
             # Procesar archivo with lazy loading
             processor_func = PROCESSORS[tool_key]
+            print(f"🔍 DEBUG: Processor function: {processor_func}")
+            
             processor = processor_func()
+            print(f"🔍 DEBUG: Processor result: {processor}")
         
             if processor is None:
                 raise HTTPException(status_code=500, detail=f"Procesador '{tool_key}' no disponible. Verifique la configuración del módulo.")
         
-            output_path = processor(temp_file_path)
+            print(f"🔍 DEBUG: Calling processor with: {temp_file_path}")
+            output_path = processor(temp_file_path, file.filename)
+            print(f"🔍 DEBUG: Processor output path: {output_path}")
         
             # Leer archivo procesado
             with open(output_path, 'rb') as processed_file:
@@ -618,7 +646,7 @@ async def process_tool_file(
             # Guardar en base de datos con el nombre consistente
             processed_file_obj = ProcessedFile(
                 original_filename=file.filename,
-                processed_filename=processed_filename,  # Usar el nombre consistente
+                processed_filename=processed_filename,
                 file_data=processed_data,
                 user_id=user.id,
                 tool_id=tool_obj.id,
@@ -636,13 +664,16 @@ async def process_tool_file(
             return Response(
                 content=processed_data,
                 media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                headers={"Content-Disposition": f"attachment; filename={processed_filename}"}  # Usar el nombre consistente
+                headers={"Content-Disposition": f"attachment; filename={processed_filename}"}
             )
         
         except Exception as e:
             # Limpiar archivo temporal en caso de error
             if os.path.exists(temp_file_path):
                 os.unlink(temp_file_path)
+            print(f"❌ Error in processor: {str(e)}")
+            import traceback
+            traceback.print_exc()
             raise e
         
     except HTTPException:
