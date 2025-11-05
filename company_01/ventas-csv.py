@@ -89,8 +89,6 @@ def find_value_after_marker(row_values, marker):
 def process_csv_diario_ventas(file_path):
     """
     Procesa archivos CSV con formato 'Diario de Ventas Detallado'
-    
-    Busca marcadores específicos en lugar de usar posiciones fijas
     """
     try:
         print("\n" + "="*80)
@@ -132,34 +130,6 @@ def process_csv_diario_ventas(file_path):
                 
                 print(f"DEBUG: 'Fecha :' encontrado en índice {fecha_idx - 1}, fecha = {fecha_raw}")
                 
-                # A partir del índice de fecha, extraer valores en POSICIONES EXACTAS
-                # Basado en el ejemplo:
-                # "Fecha :", 15/10/2025 00:00:00, "18068 Andres Martinez", "Vta.Cred.", "A", 63201, 0.00, , , 441.80, 97.20, 0.00, 539.00, , "RE296", "Durazno...", 2.00, 60.00, 1.00, 2.00, 3.00, "%", 120.00
-                
-                # Posiciones relativas desde fecha_idx:
-                # 0: fecha
-                # 1: cliente
-                # 2: tipo_doc
-                # 3: serie
-                # 4: id_doc
-                # 5: exento
-                # 6: vacío
-                # 7: vacío  
-                # 8: neto
-                # 9: iva
-                # 10: red
-                # 11: total
-                # 12: vacío
-                # 13: id_articulo
-                # 14: detalle_articulo
-                # 15: cantidad
-                # 16: precio_unit
-                # 17: desc1
-                # 18: desc2
-                # 19: desc3
-                # 20: "%"
-                # 21: total_desc
-                
                 fecha_procesada = parse_date(fecha_raw)
                 
                 cliente_raw = row_values[fecha_idx + 1] if fecha_idx + 1 < len(row_values) else None
@@ -169,12 +139,10 @@ def process_csv_diario_ventas(file_path):
                 serie_doc = clean_value_as_string(row_values[fecha_idx + 3] if fecha_idx + 3 < len(row_values) else None)
                 id_doc = clean_value_as_string(row_values[fecha_idx + 4] if fecha_idx + 4 < len(row_values) else None)
                 exento = clean_numeric_value(row_values[fecha_idx + 5] if fecha_idx + 5 < len(row_values) else None)
-                # Saltar índices 6 y 7 (vacíos)
                 neto = clean_numeric_value(row_values[fecha_idx + 8] if fecha_idx + 8 < len(row_values) else None)
                 iva = clean_numeric_value(row_values[fecha_idx + 9] if fecha_idx + 9 < len(row_values) else None)
                 red = clean_numeric_value(row_values[fecha_idx + 10] if fecha_idx + 10 < len(row_values) else None)
                 total = clean_numeric_value(row_values[fecha_idx + 11] if fecha_idx + 11 < len(row_values) else None)
-                # Saltar índice 12 (vacío)
                 id_articulo = clean_value_as_string(row_values[fecha_idx + 13] if fecha_idx + 13 < len(row_values) else None)
                 detalle = clean_value_as_string(row_values[fecha_idx + 14] if fecha_idx + 14 < len(row_values) else None)
                 cantidad = clean_numeric_value(row_values[fecha_idx + 15] if fecha_idx + 15 < len(row_values) else None)
@@ -182,15 +150,11 @@ def process_csv_diario_ventas(file_path):
                 desc1 = clean_numeric_value(row_values[fecha_idx + 17] if fecha_idx + 17 < len(row_values) else None)
                 desc2 = clean_numeric_value(row_values[fecha_idx + 18] if fecha_idx + 18 < len(row_values) else None)
                 desc3 = clean_numeric_value(row_values[fecha_idx + 19] if fecha_idx + 19 < len(row_values) else None)
-                # Saltar índice 20 (símbolo "%")
                 total_desc = clean_numeric_value(row_values[fecha_idx + 21] if fecha_idx + 21 < len(row_values) else None)
                 
-                print(f"DEBUG: ID Articulo = '{id_articulo}' (índice {fecha_idx + 13})")
-                print(f"DEBUG: Detalle = '{detalle}' (índice {fecha_idx + 14})")
-                print(f"DEBUG: Cantidad = {cantidad} (índice {fecha_idx + 15})")
-                print(f"DEBUG: Precio Unit = {precio_unit} (índice {fecha_idx + 16})")
-                print(f"DEBUG: Desc1 = {desc1}, Desc2 = {desc2}, Desc3 = {desc3}")
-                print(f"DEBUG: Total Desc = {total_desc}")
+                print(f"DEBUG: ID Articulo = '{id_articulo}'")
+                print(f"DEBUG: Detalle = '{detalle}'")
+                print(f"DEBUG: Cantidad = {cantidad}")
                 
                 # Crear registro
                 registro = {
@@ -220,8 +184,6 @@ def process_csv_diario_ventas(file_path):
                 
             except Exception as e:
                 print(f"✗ Error en fila {index + 1}: {str(e)}")
-                import traceback
-                traceback.print_exc()
                 continue
         
         print(f"\n{'='*80}")
@@ -236,12 +198,31 @@ def process_csv_diario_ventas(file_path):
     except Exception as e:
         raise Exception(f"Error al procesar CSV Diario de Ventas: {str(e)}")
 
-def process_file_diario_ventas(file_path):
+def process_file(filepath, original_filename=None):
     """
-    Función compatible con la interfaz del sistema principal
+    Procesa un archivo CSV de ventas diarias
+    
+    Args:
+        filepath (str): Ruta del archivo a procesar
+        original_filename (str, optional): Nombre original del archivo
+        
+    Returns:
+        str: Ruta del archivo procesado
     """
     try:
-        processed_data = process_csv_diario_ventas(file_path)
+        print(f"🚀 Iniciando procesamiento de: {filepath}")
+        
+        # Verificar que el archivo existe
+        if not os.path.exists(filepath):
+            raise RuntimeError(f"El archivo no existe: {filepath}")
+        
+        # Procesar el archivo CSV
+        processed_data = process_csv_diario_ventas(filepath)
+        
+        if not processed_data:
+            raise RuntimeError("No se encontraron datos válidos en el archivo")
+        
+        print(f"✅ Datos procesados: {len(processed_data)} registros")
         
         # Crear DataFrame
         df = pd.DataFrame(processed_data)
@@ -270,11 +251,18 @@ def process_file_diario_ventas(file_path):
         ]
         df = df[column_order]
         
-        # Generar nombre de archivo de salida
-        base_filename = os.path.splitext(os.path.basename(file_path))[0]
-        output_filename = f"{base_filename}_PROCESADO.xlsx"
-        output_path = os.path.join(os.path.dirname(file_path), output_filename)
+        # Generar nombre del archivo de salida usando el nombre original
+        if original_filename:
+            # Usar el nombre original proporcionado
+            original_name = os.path.splitext(original_filename)[0]
+        else:
+            # Usar el nombre del archivo actual
+            original_name = os.path.splitext(os.path.basename(filepath))[0]
+            
+        output_filename = f"{original_name}_PROCESADO.xlsx"
+        output_path = os.path.join(os.path.dirname(filepath), output_filename)
         
+        # Guardar el archivo procesado
         with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
             df.to_excel(writer, sheet_name='Ventas Procesadas', index=False)
             
@@ -292,39 +280,25 @@ def process_file_diario_ventas(file_path):
                 adjusted_width = min(max_length + 2, 50)
                 worksheet.column_dimensions[column_letter].width = adjusted_width
         
-        return output_path
+        print(f"💾 Archivo guardado en: {output_path}")
         
-    except Exception as e:
-        raise Exception(f"Error al procesar archivo: {str(e)}")
+        # Verificar que el archivo se creó correctamente
+        if not os.path.exists(output_path):
+            raise RuntimeError(f"No se pudo crear el archivo de salida: {output_path}")
+        
+        return output_path
 
-# Función principal que será llamada por el sistema
-def process_file(file_path, return_bytes=False):
-    """
-    Función principal compatible con el sistema
-    """
-    try:
-        if return_bytes:
-            # Para uso web
-            with open(file_path, 'rb') as f:
-                file_bytes = f.read()
-            bytes_data, filename = process_sales_data_for_webapp_diario(file_bytes, os.path.basename(file_path))
-            return bytes_data, filename
-        else:
-            # Para uso local
-            return process_file_diario_ventas(file_path)
     except Exception as e:
-        raise Exception(f"Error en process_file: {str(e)}")
+        print(f"❌ Error en process_file: {str(e)}")
+        print(f"❌ Tipo de error: {type(e).__name__}")
+        import traceback
+        print(f"❌ Traceback: {traceback.format_exc()}")
+        raise RuntimeError(f"Error procesando archivo de ventas CSV: {str(e)}")
 
-def process_sales_data_for_webapp_diario(file_bytes, original_filename):
+# Función para compatibilidad con el sistema web (no es necesaria para el funcionamiento básico)
+def process_sales_data_for_webapp(file_bytes, original_filename):
     """
-    Función específica para aplicaciones web (compatible con el script original)
-    
-    Args:
-        file_bytes: Bytes del archivo subido
-        original_filename: Nombre del archivo original
-    
-    Returns:
-        Tupla (bytes_data, output_filename) del archivo procesado
+    Función específica para aplicaciones web
     """
     import tempfile
     
@@ -335,65 +309,23 @@ def process_sales_data_for_webapp_diario(file_bytes, original_filename):
             temp_file_path = temp_file.name
         
         try:
-            # Procesar el archivo
-            processed_data = process_csv_diario_ventas(temp_file_path)
+            # Procesar el archivo usando la función principal
+            output_path = process_file(temp_file_path, original_filename)
             
-            # Crear DataFrame
-            df = pd.DataFrame(processed_data)
+            # Leer el archivo procesado
+            with open(output_path, 'rb') as f:
+                processed_bytes = f.read()
             
-            # Orden de columnas
-            column_order = [
-                'ID del Cliente',
-                'Razon Social',
-                'Tipo de Documento',
-                'Serie del Documento',
-                'ID del Documento',
-                'Fecha',
-                'Exento',
-                'Total Neto sin IVA',
-                'IVA Total del Documento',
-                'Total del Documento con IVA Incluido',
-                'Reduccion',
-                'ID de Articulo',
-                'Detalle de Articulo',
-                'Cantidad Comprada',
-                'Precio Unitario',
-                'Descuento 1 (%)',
-                'Descuento 2 (%)',
-                'Descuento 3 (%)',
-                'Total con Descuentos'
-            ]
-            df = df[column_order]
+            output_filename = os.path.basename(output_path)
             
-            # Generar nombre de archivo
-            base_filename = os.path.splitext(original_filename)[0]
-            output_filename = f"{base_filename}_PROCESADO.xlsx"
-            
-            # Generar archivo en memoria
-            output_buffer = BytesIO()
-            with pd.ExcelWriter(output_buffer, engine='openpyxl') as writer:
-                df.to_excel(writer, sheet_name='Ventas Procesadas', index=False)
-                
-                # Ajustar ancho de columnas
-                worksheet = writer.sheets['Ventas Procesadas']
-                for column in worksheet.columns:
-                    max_length = 0
-                    column_letter = column[0].column_letter
-                    for cell in column:
-                        try:
-                            if len(str(cell.value)) > max_length:
-                                max_length = len(str(cell.value))
-                        except:
-                            pass
-                    adjusted_width = min(max_length + 2, 50)
-                    worksheet.column_dimensions[column_letter].width = adjusted_width
-            
-            output_buffer.seek(0)
-            return output_buffer.getvalue(), output_filename
+            return processed_bytes, output_filename
             
         finally:
-            # Limpiar archivo temporal
-            os.unlink(temp_file_path)
+            # Limpiar archivos temporales
+            if os.path.exists(temp_file_path):
+                os.unlink(temp_file_path)
+            if os.path.exists(output_path):
+                os.unlink(output_path)
             
     except Exception as e:
         raise Exception(f"Error al procesar archivo para aplicación web: {str(e)}")
@@ -408,7 +340,7 @@ def main():
             print("Error: El archivo no existe.")
             return
         
-        output_path = process_file_diario_ventas(file_path)
+        output_path = process_file(file_path)
         print(f"\n¡Procesamiento completado exitosamente!")
         print(f"Archivo guardado en: {output_path}")
         
