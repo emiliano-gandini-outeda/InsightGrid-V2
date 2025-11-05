@@ -71,7 +71,7 @@ def get_process_ventas():
     return get_processor("ventas", "ventas")
 
 def get_process_ventas_csv():
-    return get_processor("ventas_csv", "ventas_csv")
+    return get_processor("ventas-csv", "ventas-csv")
 
 def get_process_lista_precios():
     return get_processor("lista_precios", "lista_precios")
@@ -315,7 +315,7 @@ async def get_user_companies(request: Request, db: Session = Depends(get_db)):
                 "facturacion.py": "facturacion", 
                 "inventario.py": "inventario",
                 "ventas.py": "ventas",
-                "ventas_csv.py": "ventas-csv",
+                "ventas-csv.py": "ventas-csv",
                 "lista_precios.py": "lista-precios",
                 "cruce_ventas.py": "cruce-ventas",
                 "vendedores.py": "vendedores",  
