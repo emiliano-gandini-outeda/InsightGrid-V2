@@ -638,9 +638,22 @@ async def process_tool_file(
             print(f"🔍 DEBUG: Calling processor with: {temp_file_path}")
             output_path = processor(temp_file_path, file.filename)
 
-            # Si el procesador devuelve tupla → usar solo el primer valor
+            # Si el processor devuelve tupla → usar solo el primer elemento
             if isinstance(output_path, tuple):
                 output_path = output_path[0]
+
+            # Si devuelve bytes (XLSX en memoria) → guardarlo como archivo
+            if isinstance(output_path, (bytes, bytearray)):
+                import tempfile, os
+                fd, temp_output_path = tempfile.mkstemp(suffix=".xlsx")
+                os.close(fd)
+                with open(temp_output_path, "wb") as f:
+                    f.write(output_path)
+                output_path = temp_output_path
+
+            # Convertir siempre a string (por si viene como PathObject)
+            output_path = str(output_path)
+
             print(f"🔍 DEBUG: Processor output path: {output_path}")
         
             # Leer archivo procesado
