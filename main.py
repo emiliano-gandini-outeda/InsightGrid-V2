@@ -644,7 +644,6 @@ async def process_tool_file(
 
             # Si devuelve bytes (XLSX en memoria) → guardarlo como archivo
             if isinstance(output_path, (bytes, bytearray)):
-                import tempfile
                 fd, temp_output_path = tempfile.mkstemp(suffix=".xlsx")
                 os.close(fd)
                 with open(temp_output_path, "wb") as f:
