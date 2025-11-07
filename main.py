@@ -637,10 +637,14 @@ async def process_tool_file(
         
             print(f"🔍 DEBUG: Calling processor with: {temp_file_path}")
             output_path = processor(temp_file_path, file.filename)
+
+            # Si el procesador devuelve tupla → usar solo el primer valor
+            if isinstance(output_path, tuple):
+                output_path = output_path[0]
             print(f"🔍 DEBUG: Processor output path: {output_path}")
         
             # Leer archivo procesado
-            with open(output_path) as processed_file:
+            with open(output_path, 'rb') as processed_file:
                 processed_data = processed_file.read()
         
             # Guardar en base de datos con el nombre consistente
