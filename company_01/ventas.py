@@ -7,6 +7,9 @@ from datetime import datetime
 from io import BytesIO
 import re
 
+def sanitize_filename(name):
+    return name.replace('\x00', '').replace('\0', '').strip()
+
 def get_column_letter(col_num):
     """Genera letras de columna para Excel (A, B, C, ..., AA, AB, etc.)"""
     letters = []
@@ -541,7 +544,7 @@ def process_file(file_path, return_bytes=False):
         df = df[column_order]
 
         # Generar nombre del archivo de salida
-        base_filename = os.path.splitext(os.path.basename(file_path))[0]
+        base_filename = sanitize_filename(os.path.splitext(os.path.basename(file_path))[0])
         output_filename = f"{base_filename}_PROCESADO.xlsx"
 
         if return_bytes:
@@ -613,7 +616,7 @@ def process_sales_data_for_webapp(file_bytes, original_filename):
         
         try:
             # Usar el nombre original del archivo para generar el nombre de salida
-            base_filename = os.path.splitext(original_filename)[0]
+            base_filename = sanitize_filename(os.path.splitext(original_filename)[0])
             output_filename = f"{base_filename}_PROCESADO.xlsx"
             
             # Procesar el archivo temporal
