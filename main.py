@@ -640,7 +640,7 @@ async def process_tool_file(
             print(f"🔍 DEBUG: Processor output path: {output_path}")
         
             # Leer archivo procesado
-            with open(output_path, 'rb') as processed_file:
+            with open(output_path) as processed_file:
                 processed_data = processed_file.read()
         
             # Guardar en base de datos con el nombre consistente
